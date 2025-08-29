@@ -11,8 +11,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
   Dimensions,
   TextInput,
   KeyboardAvoidingView,
@@ -26,6 +24,7 @@ import {
   Keyboard,
   RefreshControl
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
   Ionicons 
 } from '@expo/vector-icons';
@@ -64,7 +63,7 @@ import { authAPI } from '../services/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import WhatsAppMessagingManager from '../../components/WhatsAppMessagingManager';
+// Removed WhatsAppMessagingManager UI import to run 24h logic in background only
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -806,8 +805,7 @@ const LiveChatScreen = () => {
   // Add state to track if data has been loaded successfully
   const [hasLoadedData, setHasLoadedData] = useState(false);
   
-  // WhatsApp Messaging Manager state
-  const [showWhatsAppManager, setShowWhatsAppManager] = useState(false);
+  // WhatsApp Messaging Manager state removed (background-only behavior)
   
   // Remove auto-refresh and notification states
   const lastMessageCountRef = useRef(0); // Track last message count for smart refresh
@@ -3114,7 +3112,6 @@ const LiveChatScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="light-content" backgroundColor="#075E54" />
       
       {!selectedChat ? (
         // Chat List View
@@ -3144,14 +3141,7 @@ const LiveChatScreen = () => {
               </View>
               <View style={styles.headerRight}>
 
-                {/* WhatsApp Messaging Manager Button */}
-                <TouchableOpacity 
-                  style={styles.whatsappManagerButton}
-                  onPress={() => setShowWhatsAppManager(true)}
-                  activeOpacity={0.7}
-                >
-                  <MessageCircle size={20} color="#fff" />
-                </TouchableOpacity>
+                {/* WhatsApp Messaging Manager Button removed (background-only) */}
                 
                 {/* Refresh Button */}
                 <TouchableOpacity 
@@ -3583,12 +3573,7 @@ const LiveChatScreen = () => {
         onClose={() => setShowAgentNotification(false)}
       />
 
-      {/* WhatsApp Messaging Manager */}
-      <WhatsAppMessagingManager
-        visible={showWhatsAppManager}
-        onClose={() => setShowWhatsAppManager(false)}
-        selectedChatId={selectedChat?.uid || selectedChat?.id || selectedChat?.chat_id}
-      />
+      {/* WhatsApp Messaging Manager UI removed (background-only behavior) */}
 
     </SafeAreaView>
   );
@@ -3635,14 +3620,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  whatsappManagerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  // whatsappManagerButton removed
   refreshButton: {
     width: 40,
     height: 40,

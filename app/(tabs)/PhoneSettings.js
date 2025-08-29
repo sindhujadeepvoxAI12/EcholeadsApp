@@ -8,8 +8,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
   Dimensions,
   TextInput,
   Animated,
@@ -18,6 +16,7 @@ import {
   Platform,
   RefreshControl
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Phone,
   Search,
@@ -366,7 +365,6 @@ const PhoneSettingsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       {/* Header */}
       <View style={styles.header}>

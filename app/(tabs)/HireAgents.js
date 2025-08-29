@@ -8,8 +8,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
   Dimensions,
   TextInput,
   Animated,
@@ -17,6 +15,7 @@ import {
   Modal,
   Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Search,
   Filter,
@@ -606,7 +605,6 @@ const HiredAgentsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       <AnimatedHeader onAddNew={() => router.push('/CreateAgent')} />
       

@@ -12,12 +12,15 @@ export default function TabLayout() {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
           borderTopColor: '#f0f0f0',
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          paddingBottom: 10,
+          paddingTop: 8,
+          height: 74,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: '600',
         },
       }}
@@ -30,7 +33,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? 'grid' : 'grid-outline'} 
-              size={24} 
+              size={26} 
               color={color} 
             />
           ),
@@ -44,7 +47,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? 'people' : 'people-outline'} 
-              size={24} 
+              size={26} 
               color={color} 
             />
           ),
@@ -58,7 +61,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? 'call' : 'call-outline'} 
-              size={24} 
+              size={26} 
               color={color} 
             />
           ),
@@ -72,7 +75,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? 'calendar' : 'calendar-outline'} 
-              size={24} 
+              size={26} 
               color={color} 
             />
           ),
@@ -86,7 +89,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? 'card' : 'card-outline'} 
-              size={24} 
+              size={26} 
               color={color} 
             />
           ),
@@ -100,7 +103,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? 'chatbubbles' : 'chatbubbles-outline'} 
-              size={24} 
+              size={26} 
               color={color} 
             />
           ),

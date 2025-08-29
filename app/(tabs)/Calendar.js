@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+// Safe area is handled globally in app/_layout.js
 import { Calendar } from 'react-native-calendars';
 import { LinearGradient } from 'expo-linear-gradient';
 import { calendarAPI } from '../services/calendarService';
@@ -19,6 +19,7 @@ const CalendarPage = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [listFilter, setListFilter] = useState('all'); // all | upcoming | week | day
 
   // Build marked dates from API data with multiple events per day and different colors
   const events = useMemo(() => {
@@ -76,6 +77,41 @@ const CalendarPage = () => {
   };
 
   const viewModes = ['Month', 'Week', 'Day', 'List'];
+
+  // Helpers
+  const parseEventDateTime = (event) => {
+    const datePart = event?.availability_date;
+    const timePart = event?.availability_time || '00:00:00';
+    if (!datePart) return null;
+    const isoString = `${datePart}T${timePart.length === 5 ? timePart + ':00' : timePart}`;
+    const dt = new Date(isoString);
+    return isNaN(dt.getTime()) ? null : dt;
+  };
+
+  const startOfToday = () => {
+    const n = new Date();
+    n.setHours(0, 0, 0, 0);
+    return n;
+  };
+
+  const endOfToday = () => {
+    const n = new Date();
+    n.setHours(23, 59, 59, 999);
+    return n;
+  };
+
+  const endOfThisWeek = () => {
+    const n = new Date();
+    // Week ends on Saturday 23:59:59
+    const day = n.getDay(); // 0 Sun ... 6 Sat
+    const diffToSat = 6 - day;
+    const end = new Date(n);
+    end.setDate(n.getDate() + diffToSat);
+    end.setHours(23, 59, 59, 999);
+    return end;
+  };
+
+  const nowDate = () => new Date();
 
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
@@ -168,6 +204,46 @@ const CalendarPage = () => {
     );
   };
 
+  const renderEventsList = (title, sourceEvents) => {
+    const sorted = [...sourceEvents].sort((a, b) => {
+      const da = parseEventDateTime(a)?.getTime() || 0;
+      const db = parseEventDateTime(b)?.getTime() || 0;
+      return da - db;
+    });
+
+    return (
+      <View style={styles.selectedDateContainer}>
+        {title ? <Text style={styles.selectedDateTitle}>{title}</Text> : null}
+        {sorted.length > 0 ? (
+          <ScrollView style={styles.eventsList}>
+            {sorted.map((event, index) => (
+              <View key={index} style={styles.eventItem}>
+                <View style={styles.eventHeader}>
+                  <Text style={styles.eventTime}>
+                    {event.availability_time ? event.availability_time.slice(0, 5) : 'N/A'}
+                  </Text>
+                  <Text style={styles.eventName}>
+                    {event.full_name || event.bot_name || 'Unnamed Event'}
+                  </Text>
+                </View>
+                <View style={styles.eventDetails}>
+                  <Text style={styles.eventDetail}>
+                    Date: {event.availability_date || 'N/A'}
+                  </Text>
+                  <Text style={styles.eventDetail}>
+                    Agent: {event.bot_name || 'N/A'}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <Text style={styles.noEventsText}>No events to show</Text>
+        )}
+      </View>
+    );
+  };
+
   const renderSelectedDateInfo = () => {
     if (!selectedDate) return null;
 
@@ -219,40 +295,80 @@ const CalendarPage = () => {
     }
 
     const totalEvents = bookings.length;
-    const now = new Date();
-    const upcoming = bookings.filter((b) => {
-      const d = b.availability_date;
-      const t = b.availability_time || '00:00:00';
-      if (!d) return false;
-      const dt = new Date(`${d}T${t}`);
-      return dt.getTime() > now.getTime();
+    const upcomingCount = bookings.filter((b) => {
+      const dt = parseEventDateTime(b);
+      return dt && dt.getTime() > nowDate().getTime();
     }).length;
 
     return (
       <View style={styles.statsContainer}>
         <Text style={styles.statsTitle}>Calendar Overview</Text>
         <View style={styles.statsRow}>
-          <View style={styles.statCard}>
+          <TouchableOpacity
+            style={styles.statCard}
+            onPress={() => {
+              setViewMode('List');
+              setListFilter('all');
+            }}
+          >
             <View style={styles.statIcon}>
               <Text style={styles.statIconText}>📅</Text>
             </View>
             <Text style={styles.statLabel}>Total Events</Text>
             <Text style={styles.statValue}>{totalEvents}</Text>
-          </View>
-          <View style={styles.statCard}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.statCard}
+            onPress={() => {
+              setViewMode('List');
+              setListFilter('upcoming');
+            }}
+          >
             <View style={styles.statIcon}>
               <Text style={styles.statIconText}>✓</Text>
             </View>
             <Text style={styles.statLabel}>Upcoming</Text>
-            <Text style={styles.statValue}>{upcoming}</Text>
-          </View>
+            <Text style={styles.statValue}>{upcomingCount}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
   };
 
+  // Compute lists for the non-month views
+  const weekEventsFromToday = useMemo(() => {
+    const start = nowDate();
+    const end = endOfThisWeek();
+    return bookings.filter((b) => {
+      const dt = parseEventDateTime(b);
+      return dt && dt >= start && dt <= end;
+    });
+  }, [bookings]);
+
+  const todayEventsFromNow = useMemo(() => {
+    const start = nowDate();
+    const startDay = startOfToday();
+    const end = endOfToday();
+    return bookings.filter((b) => {
+      const dt = parseEventDateTime(b);
+      if (!dt) return false;
+      // If event is today, only include from now forward; if earlier today, exclude
+      if (dt >= start && dt <= end) return true;
+      // If now is earlier than today's start (unlikely), also include
+      return dt >= startDay && dt <= end && start <= end;
+    });
+  }, [bookings]);
+
+  const upcomingEvents = useMemo(() => {
+    const start = nowDate();
+    return bookings.filter((b) => {
+      const dt = parseEventDateTime(b);
+      return dt && dt > start;
+    });
+  }, [bookings]);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView 
         style={styles.scrollView} 
         showsVerticalScrollIndicator={false}
@@ -266,11 +382,18 @@ const CalendarPage = () => {
           
           {renderViewModeSelector()}
           {renderStatsOverview()}
-          {renderCalendar()}
-          {renderSelectedDateInfo()}
+          {viewMode === 'Month' && renderCalendar()}
+          {viewMode === 'Week' && renderEventsList('This Week (from today)', weekEventsFromToday)}
+          {viewMode === 'Day' && renderEventsList('Today', todayEventsFromNow)}
+          {viewMode === 'List' &&
+            renderEventsList(
+              listFilter === 'upcoming' ? 'Upcoming Events' : 'All Events',
+              listFilter === 'upcoming' ? upcomingEvents : bookings
+            )}
+          {viewMode === 'Month' && renderSelectedDateInfo()}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

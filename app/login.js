@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// Safe area is handled globally in app/_layout.js
 import { Eye, EyeOff, Mail, Lock, ChevronRight, Zap, User } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -158,7 +158,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
       
       <KeyboardAvoidingView 
@@ -398,7 +398,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
           </View>
         </Animated.View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

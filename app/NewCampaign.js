@@ -6,16 +6,15 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
-  SafeAreaView,
   Alert,
   ActivityIndicator,
   Dimensions,
   Modal,
   FlatList,
   Animated,
-  StatusBar,
   Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Upload,
   FileText,
@@ -740,7 +739,6 @@ const CampaignCreationFlow = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -992,7 +990,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
   header: {
     flexDirection: 'row',
