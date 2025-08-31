@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Animated } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useCampaigns } from '../contexts/CampaignContext';
-import { MotiView, MotiText } from 'moti';
+// import { MotiView, MotiText } from 'moti';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView as RNScrollView } from 'react-native';
 
@@ -103,63 +103,57 @@ export default function AgentCampaignAnalytics() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Animated Header with light orange background (scrolls with page) */}
-        <MotiView from={{ opacity: 0, translateY: -30 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 600 }} style={styles.headerBg}>
+        <View style={styles.headerBg}>
           <View style={styles.headerRowNew}>
             <Text style={styles.campaignNameNew}>{campaign?.name || 'Campaign'}</Text>
             <View style={[styles.statusBadge, campaign?.status === 'Completed' ? styles.statusCompleted : styles.statusActive]}>
               <Text style={[styles.statusText, campaign?.status === 'Completed' ? styles.statusTextCompleted : styles.statusTextActive]}>{campaign?.status || ''}</Text>
             </View>
           </View>
-        </MotiView>
+        </View>
         {/* 2x2 Animated Stat Card Grid (scrolls with page) */}
-        <MotiView from={{ opacity: 0, translateY: 30 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 700, delay: 200 }} style={styles.statsGrid2x2}>
-          <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 100 }} style={[styles.statCard2, styles.statCardCalls2]}>
+        <View style={styles.statsGrid2x2}>
+          <View style={[styles.statCard2, styles.statCardCalls2]}>
             <View style={styles.statIconCircleCalls}><Ionicons name="call-outline" size={28} color="#fff" /></View>
             <Text style={styles.statValueBig2}>{totalCalls}</Text>
             <Text style={styles.statLabel2}>Total Calls</Text>
             <Text style={styles.statTrendRed2}>▼ 0% last week</Text>
-          </MotiView>
-          <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 200 }} style={[styles.statCard2, styles.statCardSuccess2]}>
+          </View>
+          <View style={[styles.statCard2, styles.statCardSuccess2]}>
             <View style={styles.statIconCircleSuccess}><Ionicons name="checkmark-circle-outline" size={28} color="#fff" /></View>
             <Text style={styles.statValueBig2}>0</Text>
             <Text style={styles.statLabel2}>Success Rate</Text>
             <Text style={styles.statTrendGreen2}>▲ 0% conversion</Text>
-          </MotiView>
-          <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 300 }} style={[styles.statCard2, styles.statCardDuration2]}>
+          </View>
+          <View style={[styles.statCard2, styles.statCardDuration2]}>
             <View style={styles.statIconCircleDuration}><Ionicons name="time-outline" size={28} color="#fff" /></View>
             <Text style={styles.statValueBig2}>{avgDurationStr}</Text>
             <Text style={styles.statLabel2}>Avg Duration</Text>
             <Text style={styles.statSub2}>min/call</Text>
-          </MotiView>
-          <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 400 }} style={[styles.statCard2, styles.statCardResponse2]}>
+          </View>
+          <View style={[styles.statCard2, styles.statCardResponse2]}>
             <View style={styles.statIconCircleResponse}><Ionicons name="chatbubble-ellipses-outline" size={28} color="#fff" /></View>
             <Text style={styles.statValueBig2}>0</Text>
             <Text style={styles.statLabel2}>Response Rate</Text>
             <Text style={styles.statTrendRed2}>▼ 0% engagement</Text>
-          </MotiView>
-        </MotiView>
+          </View>
+        </View>
         {/* Sentiment Distribution */}
         <View style={styles.sentimentCard}>
           <Text style={styles.sentimentTitle}>Sentiment Distribution</Text>
           {['positive', 'neutral', 'negative'].map((sentiment, i) => (
             <View key={sentiment} style={styles.sentimentRow}>
               <View style={styles.sentimentEmojiLabelRow}>
-                <MotiText
-                  from={{ scale: 0.7, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', delay: 200 + i * 120 }}
+                <Text
                   style={styles.sentimentEmoji}
                 >
                   {sentiment === 'positive' ? '😊' : sentiment === 'neutral' ? '😐' : '😞'}
-                </MotiText>
+                </Text>
                 <Text style={styles.sentimentLabel}>{sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}</Text>
               </View>
               <Text style={styles.sentimentPercent}>{percent(sentimentCounts[sentiment], totalCalls)}</Text>
               <View style={styles.sentimentBarBg}>
-                <MotiView
-                  from={{ width: 0, opacity: 0 }}
-                  animate={{ width: `${percent(sentimentCounts[sentiment], totalCalls)}`, opacity: 1 }}
-                  transition={{ type: 'timing', duration: 800, delay: 300 + i * 120 }}
+                <View
                   style={[styles.sentimentBar, { backgroundColor: sentimentColors[sentiment] }]}
                 />
               </View>
@@ -171,14 +165,14 @@ export default function AgentCampaignAnalytics() {
         {/* Key Insights */}
         <View style={styles.insightsRow}>
           {insights.map((insight, i) => (
-            <MotiView key={insight.title} from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={{ delay: 100 * (i + 1) }} style={styles.insightCard}>
+            <View key={insight.title} style={styles.insightCard}>
               <Text style={styles.insightTitle}>{insight.title}</Text>
               <Text style={styles.insightDesc}>{insight.desc}</Text>
               <View style={styles.insightFooter}>
                 <Text style={[styles.insightValue, { color: insight.color }]}>{insight.value}</Text>
                 <Text style={[insight.trend >= 0 ? styles.insightTrendGreen : styles.insightTrendRed]}>{insight.trend >= 0 ? `▲ ${Math.abs(insight.trend)}%` : `▼ ${Math.abs(insight.trend)}%`}</Text>
               </View>
-            </MotiView>
+            </View>
           ))}
         </View>
         {/* AI Recommendations */}
@@ -186,12 +180,12 @@ export default function AgentCampaignAnalytics() {
           <Text style={styles.recommendTitle}>AI Recommendations</Text>
           <View style={styles.recommendGrid}>
             {recommendations.map((rec, i) => (
-              <MotiView key={i} from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 100 * (i + 1) }} style={styles.recommendItem}>
+              <View key={i} style={styles.recommendItem}>
                 <Text style={styles.recommendText}>{rec.text}</Text>
                 <View style={[styles.impactBadge, rec.impact === 'HIGH IMPACT' ? styles.impactHigh : rec.impact === 'MEDIUM IMPACT' ? styles.impactMedium : styles.impactLow]}>
                   <Text style={styles.impactBadgeText}>{rec.impact}</Text>
                 </View>
-              </MotiView>
+              </View>
             ))}
           </View>
         </View>
@@ -204,7 +198,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
-    paddingTop: Platform.OS === 'android' ? 32 : 40,
+    paddingTop: 15, // Moderate padding top
   },
   headerRow: {
     flexDirection: 'row',
@@ -494,7 +488,7 @@ const styles = StyleSheet.create({
   },
   headerBg: {
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? 32 : 40,
+    paddingTop: 15, // Moderate padding top
     paddingBottom: 18,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,

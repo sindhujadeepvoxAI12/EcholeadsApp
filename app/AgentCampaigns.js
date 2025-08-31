@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Platform } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { useCampaigns } from '../contexts/CampaignContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pause, Play } from 'lucide-react-native';
@@ -20,10 +20,7 @@ const CampaignCard = ({ campaign, onShowDetails, onShowAnalytics, index, onPlayP
     badgeText = styles.statusTextOther;
   }
   return (
-    <MotiView
-      from={{ opacity: 0, translateY: 30, scale: 0.95 }}
-      animate={{ opacity: 1, translateY: 0, scale: 1 }}
-      transition={{ type: 'timing', duration: 600, delay: index * 100 }}
+    <View
       style={styles.card}
     >
       <View style={styles.cardHeader}>
@@ -56,10 +53,7 @@ const CampaignCard = ({ campaign, onShowDetails, onShowAnalytics, index, onPlayP
         </View>
       </View>
       <View style={styles.progressBarContainer}>
-        <MotiView
-          from={{ width: 0 }}
-          animate={{ width: `${campaign.progress}%` }}
-          transition={{ type: 'timing', duration: 1000 }}
+        <View
           style={styles.progressBar}
         />
         <Text style={styles.progressText}>Progress: {campaign.progress}%</Text>
@@ -83,7 +77,7 @@ const CampaignCard = ({ campaign, onShowDetails, onShowAnalytics, index, onPlayP
           <Ionicons name="checkmark" size={22} color="#F97316" />
         </View>
       </View>
-    </MotiView>
+    </View>
   );
 };
 
@@ -172,7 +166,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
-    paddingTop: Platform.OS === 'android' ? 32 : 40,
+    paddingTop: 15, // Moderate padding top
     paddingHorizontal: 0,
   },
   headerWrap: {

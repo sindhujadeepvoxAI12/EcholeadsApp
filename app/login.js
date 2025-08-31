@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -6,7 +6,7 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   ScrollView,
-  Animated,
+  // Animated,
   Dimensions,
   StatusBar,
   KeyboardAvoidingView,
@@ -34,58 +34,59 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState({});
 
   // Animation refs
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideUpAnim = useRef(new Animated.Value(50)).current;
-  const slideLeftAnim = useRef(new Animated.Value(30)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideUpAnim = useRef(new Animated.Value(50)).current;
+  // const slideLeftAnim = useRef(new Animated.Value(30)).current;
+  // const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  // const buttonScale = useRef(new Animated.Value(1)).current;
+  // const pulseAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    // Staggered animations
-    Animated.stagger(200, [
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideUpAnim, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.timing(slideLeftAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 20,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  // useEffect(() => {
+  //   // Staggered animations
+  //   Animated.stagger(200, [
+  //     Animated.parallel([
+  //       Animated.timing(fadeAnim, {
+  //         toValue: 1,
+  //         duration: 800,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(slideUpAnim, {
+  //         toValue: 0,
+  //         duration: 600,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]),
+  //     Animated.timing(slideLeftAnim, {
+  //       toValue: 0,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.spring(scaleAnim, {
+  //       toValue: 1,
+  //       tension: 20,
+  //       friction: 8,
+  //       useNativeDriver: true,
+  //     }),
+  //   ])
+  // ).start();
 
-    // Continuous pulse animation for accent elements
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    pulse.start();
-  }, []);
+  //   // Continuous pulse animation for accent elements
+  //   const pulse = Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(pulseAnim, {
+  //         toValue: 1.1,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(pulseAnim, {
+  //         toValue: 1,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   );
+  //   pulse.start();
+  // }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -105,10 +106,10 @@ export default function LoginScreen() {
   const handleSignIn = async () => {
     if (!validateForm()) return;
   
-    Animated.sequence([
-      Animated.timing(buttonScale, { toValue: 0.96, duration: 100, useNativeDriver: true }),
-      Animated.timing(buttonScale, { toValue: 1, duration: 150, useNativeDriver: true }),
-    ]).start();
+    // Animated.sequence([
+    //   Animated.timing(buttonScale, { toValue: 0.96, duration: 100, useNativeDriver: true }),
+    //   Animated.timing(buttonScale, { toValue: 1, duration: 150, useNativeDriver: true }),
+    // ]).start();
   
     setLoading(true);
   
@@ -171,32 +172,29 @@ await AsyncStorage.setItem('loggedInUser', String(name));
           keyboardShouldPersistTaps="handled"
         >
           {/* Header Section */}
-          <Animated.View 
+          <View 
             style={[
               styles.headerSection,
               {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideUpAnim }]
+                opacity: 1,
+                transform: [{ translateY: 0 }]
               }
             ]}
           >
             <View style={styles.headerBackground}>
-              <Animated.View 
+              <View 
                 style={[
                   styles.accentCircle1,
                   {
-                    transform: [{ scale: pulseAnim }]
+                    transform: [{ scale: 1 }]
                   }
                 ]}
               />
-              <Animated.View 
+              <View 
                 style={[
                   styles.accentCircle2,
                   {
-                    transform: [{ scale: pulseAnim.interpolate({
-                      inputRange: [1, 1.1],
-                      outputRange: [1.1, 1]
-                    }) }]
+                    transform: [{ scale: 1.1 }]
                   }
                 ]}
               />
@@ -213,17 +211,17 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 AI-Powered Lead Generation Platform
               </Text>
             </View>
-          </Animated.View>
+          </View>
 
           {/* Form Section */}
-          <Animated.View 
+          <View 
             style={[
               styles.formSection,
               {
-                opacity: fadeAnim,
+                opacity: 1,
                 transform: [
-                  { translateX: slideLeftAnim },
-                  { scale: scaleAnim }
+                  { translateX: 0 },
+                  { scale: 1 }
                 ]
               }
             ]}
@@ -299,7 +297,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 </View>
 
                 {/* Sign In Button */}
-                <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+                <View style={{ transform: [{ scale: 1 }] }}>
                   <TouchableOpacity
                     style={[styles.signInButton, loading && styles.signInButtonLoading]}
                     onPress={handleSignIn}
@@ -308,15 +306,12 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                     <View style={styles.buttonContent}>
                       {loading ? (
                         <View style={styles.loadingContainer}>
-                          <Animated.View 
+                          <View 
                             style={[
                               styles.loadingSpinner,
                               {
                                 transform: [{
-                                  rotate: fadeAnim.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: ['0deg', '360deg']
-                                  })
+                                  rotate: '0deg'
                                 }]
                               }
                             ]}
@@ -331,7 +326,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                       )}
                     </View>
                   </TouchableOpacity>
-                </Animated.View>
+                </View>
 
                 {/* Divider */}
                 <View style={styles.dividerContainer}>
@@ -352,17 +347,14 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 </View> */}
               </View>
             </View>
-          </Animated.View>
+          </View>
 
           {/* Footer */}
-          <Animated.View 
+          <View 
             style={[
               styles.footer,
               {
-                opacity: fadeAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 0.8]
-                })
+                opacity: 0.8
               }
             ]}
           >
@@ -372,18 +364,18 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 <Text style={styles.footerLink}>Sign up here</Text>
               </TouchableOpacity>
             </Text>
-          </Animated.View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
       
       {/* Welcome Message Overlay */}
       {showWelcome && (
-        <Animated.View 
+        <View 
           style={[
             styles.welcomeOverlay,
             {
-              opacity: fadeAnim,
-              transform: [{ scale: scaleAnim }]
+              opacity: 1,
+              transform: [{ scale: 1 }]
             }
           ]}
         >
@@ -396,7 +388,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
               You've successfully signed in to your account.
             </Text>
           </View>
-        </Animated.View>
+        </View>
       )}
     </View>
   );

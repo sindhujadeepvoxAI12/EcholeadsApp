@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform, FlatList, Animated, Dimensions, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -188,10 +188,7 @@ export default function CallDetails() {
               data={filteredCalls}
               keyExtractor={item => item.id.toString()}
               renderItem={({ item, index }) => (
-                <MotiView
-                  from={{ opacity: 0, translateY: 20 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ type: 'timing', duration: 500, delay: index * 80 }}
+                <View
                   style={[styles.tableRow, highlightedRow === item.id && styles.tableRowHighlight]}
                 >
                   <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }} activeOpacity={0.95} onPress={() => handleRowPress(item.id)}>
@@ -212,7 +209,7 @@ export default function CallDetails() {
                       <Text style={styles.viewBtnText}>View</Text>
                     </TouchableOpacity>
                   </TouchableOpacity>
-                </MotiView>
+                </View>
               )}
               contentContainerStyle={{ minWidth: COLUMN_WIDTHS.reduce((a, b) => a + b, 0), paddingVertical: 8 }}
               refreshing={refreshing}
@@ -278,7 +275,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
-    paddingTop: Platform.OS === 'android' ? 32 : 40,
+    paddingTop: 15, // Moderate padding top
     paddingHorizontal: 0,
   },
   headerRow: {

@@ -9,7 +9,7 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
@@ -24,7 +24,7 @@ const AgentConfigPage = () => {
       case '1': // Real Estate
         return {
           greeting: 'We are calling from Global real estate real estate, we have serious buyers and investors, and we are looking for collaboration',
-          prompt: `#About Us\n-Global real estate is a boutique real estate firm specializing in end-to-end portfolio management for international buyers.\n-From off-plan and secondary properties to plots and commercial spaces, we offer a seamless investment experience.\n-With a diverse property portfolio, personalized assistance, and cutting-edge technology,\n-We ensure every client finds their perfect opportunity in Dubai’s thriving real estate market.\n\n#Guidelines:-\n-You are an AI assistant for Global real estate.\n-You need to start by telling the benefits of this collaboration and after user's acknowledgement to proceed, start collecting below information\n-Do not ask anything apart from these prompts.\n-Don't repeat the user's name.\n\n#Call opening/flow:-\nMay i know if you are you more focused on off-plan, Rentals or secondary market deals?\n(wait for user response and then ask other details below)\n-Current Direct Inventory for example :- existing plots, villas, flats, lands etc.\n(wait for user response)\n-Name\n(wait for user response)\n-Alternate Phone number.\n(wait for user response)\n\n#Confirm/Recall all the details:   \n- Property Type Specialization: [User's Choice]  \n- Current Direct Inventory: [Yes/No + Listing Details if applicable]  \n- Alternate Phone Number: [User's Number]  \n\n#Closing    \nThank you for your time, [User's Name]. It was a pleasure speaking with you. \nOne of our team members will be in touch soon to discuss how we can work together.  \nHave a fantastic day ahead, [User's Name]! We’re excited to work with you.`
+          prompt: `#About Us\n-Global real estate is a boutique real estate firm specializing in end-to-end portfolio management for international buyers.\n-From off-plan and secondary properties to plots and commercial spaces, we offer a seamless investment experience.\n-With a diverse property portfolio, personalized assistance, and cutting-edge technology,\n-We ensure every client finds their perfect opportunity in Dubai's thriving real estate market.\n\n#Guidelines:-\n-You are an AI assistant for Global real estate.\n-You need to start by telling the benefits of this collaboration and after user's acknowledgement to proceed, start collecting below information\n-Do not ask anything apart from these prompts.\n-Don't repeat the user's name.\n\n#Call opening/flow:-\nMay i know if you are you more focused on off-plan, Rentals or secondary market deals?\n(wait for user response and then ask other details below)\n-Current Direct Inventory for example :- existing plots, villas, flats, lands etc.\n(wait for user response)\n-Name\n(wait for user response)\n-Alternate Phone number.\n(wait for user response)\n\n#Confirm/Recall all the details:   \n- Property Type Specialization: [User's Choice]  \n- Current Direct Inventory: [Yes/No + Listing Details if applicable]  \n- Alternate Phone Number: [User's Number]  \n\n#Closing    \nThank you for your time, [User's Name]. It was a pleasure speaking with you. \nOne of our team members will be in touch soon to discuss how we can work together.  \nHave a fantastic day ahead, [User's Name]! We're excited to work with you.`
         };
       case '2': // Alex HR
         return {
@@ -247,7 +247,7 @@ const AgentConfigPage = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <LinearGradient
         colors={['#FFFFFF', '#FFFFFF']}
         style={styles.backgroundGradient}
@@ -505,7 +505,7 @@ const AgentConfigPage = () => {
           </TouchableOpacity>
         </ScrollView>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -522,12 +522,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 40,
-    paddingTop: 20,
+    // paddingTop: 20, // Commented out to remove extra spacing
   },
   header: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 15, // Reduced from 30 to 15 to match Dashboard.js
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
