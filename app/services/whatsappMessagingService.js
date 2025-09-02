@@ -121,10 +121,10 @@ class WhatsAppMessagingService {
         // Find the last incoming message (from user)
         const lastIncomingMessage = chatDetails.messages
           .filter(msg => msg.sender === 'received' || msg.is_incoming_message === 1)
-          .sort((a, b) => new Date(b.timestamp || b.created_at) - new Date(a.timestamp || a.created_at))[0];
+          .sort((a, b) => new Date(b.timestamp || b.updated_at || b.created_at) - new Date(a.timestamp || a.updated_at || a.created_at))[0];
 
         if (lastIncomingMessage) {
-          const timestamp = new Date(lastIncomingMessage.timestamp || lastIncomingMessage.created_at).getTime();
+          const timestamp = new Date(lastIncomingMessage.timestamp || lastIncomingMessage.updated_at || lastIncomingMessage.created_at).getTime();
           const activityData = {
             timestamp,
             messageId: lastIncomingMessage.id,
@@ -376,7 +376,11 @@ class WhatsAppMessagingService {
     setInterval(() => {
       this.cleanupOldEngagementData();
     }, 24 * 60 * 60 * 1000);
+    
+    console.log('🔄 WhatsAppMessagingService: Background processing started');
   }
+
+
 
   // Process queued template messages
   async processTemplateMessageQueue() {

@@ -13,8 +13,8 @@ const Header = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 15,
+      // paddingHorizontal: 20,
+      // paddingVertical: 15,
       backgroundColor: theme.colors.background,
       shadowColor: '#000',
       shadowOffset: {
@@ -55,7 +55,7 @@ const Header = () => {
   });
 
   return (
-    <View style={styles.header}>
+    <View >
       <View style={styles.leftSection}>
         <View style={styles.logoContainer}>
           <Image

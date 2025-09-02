@@ -10,7 +10,7 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useAgents } from '../contexts/AgentContext';
@@ -496,7 +496,7 @@ const AIAgentsPage = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <LinearGradient
         colors={['#FFFFFF', '#FFFFFF']}
         style={styles.backgroundGradient}
@@ -518,7 +518,7 @@ const AIAgentsPage = () => {
         
         {renderTestCallModal()}
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 15, // Reduced from 30 to 15 to match Dashboard.js
     paddingBottom: 20,
   },
   pageTitle: {

@@ -8,7 +8,7 @@ import {
   Switch,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
@@ -307,7 +307,7 @@ const PurchasePage = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
               <LinearGradient
           colors={['#F8F9FA', '#F8F9FA']}
           style={styles.backgroundGradient}
@@ -331,7 +331,7 @@ const PurchasePage = () => {
           </View>
         </ScrollView>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -349,13 +349,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 15, // Moderate padding top
     paddingBottom: 40,
   },
   headerContainer: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 15, // Moderate padding top
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',

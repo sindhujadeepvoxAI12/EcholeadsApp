@@ -8,7 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-// Safe area is handled globally in app/_layout.js
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { LinearGradient } from 'expo-linear-gradient';
 import { calendarAPI } from '../services/calendarService';
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 15, // Moderate padding top
   },
   pageTitle: {
     fontSize: 28,

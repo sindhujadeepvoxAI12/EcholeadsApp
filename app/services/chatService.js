@@ -296,8 +296,11 @@ export const chatAPI = {
               // is_incoming_message === 0 -> 'user' (RIGHT side - system/bot messages)
               sender: (msg.is_incoming_message === 1) ? 'received' : 'user',
               from: msg.from || 'contact',
+              // Use created_at as primary timestamp for message creation
               timestamp: msg.created_at || msg.timestamp || new Date(),
+              // Preserve both timestamp fields from API
               created_at: msg.created_at || msg.timestamp || new Date(),
+              updated_at: msg.updated_at || msg.created_at || new Date(),
               // Add fields that the UI expects
               // CRITICAL: Preserve API direction field for left/right placement
               is_incoming_message: (msg.is_incoming_message !== undefined ? msg.is_incoming_message : (msg.status === 'received' ? 1 : 0)),
@@ -438,17 +441,26 @@ export const chatAPI = {
   // Send a message to a specific chat
   sendMessage: async (chatUidOrId, messageText, messageType = 'text', aiAgentEnabled = true) => {
     try {
-      console.log('🔍 chatService: sendMessage called with:', { chatUidOrId, messageText, messageType });
+      console.log('🔍 chatService: sendMessage called with:', { chatUidOrId, messageText, messageType, aiAgentEnabled });
       const url = `/chat/sendmsg/${encodeURIComponent(chatUidOrId)}`;
       console.log('🔍 chatService: Making request to:', url);
       console.log('🔍 chatService: Full URL:', API_BASE_URL + url);
 
-      // Backend expects multipart form-data even for text-only
+      // Backend expects multipart form-data with AI agent status
       const formData = new FormData();
       formData.append('message', messageText || '');
       formData.append('message_type', messageType || 'text');
+      // CRITICAL: Include AI agent status so backend knows whether to let bot respond
+      // "1" = AI agent ENABLED (bot will respond automatically)
+      // "0" = AI agent DISABLED (bot will NOT respond, only system messages)
+      formData.append('enable_ai_bot', aiAgentEnabled ? "1" : "0");
 
-      console.log('🔍 chatService: Request body (FormData, text-only):', { message: messageText, message_type: messageType });
+      console.log('🔍 chatService: Request body (FormData, text-only):', { 
+        message: messageText, 
+        message_type: messageType,
+        enable_ai_bot: aiAgentEnabled ? "1" : "0",
+        aiBehavior: aiAgentEnabled ? "Bot responds automatically" : "Bot does not respond"
+      });
 
       const response = await chatApi.post(url, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -469,15 +481,19 @@ export const chatAPI = {
   // Send a message with file attachments
   sendMessageWithFiles: async (chatUidOrId, messageText, files, messageType = 'file', aiAgentEnabled = true) => {
     try {
-      console.log('📎 chatService: sendMessageWithFiles called with:', { chatUidOrId, messageText, fileCount: files.length, messageType });
+      console.log('📎 chatService: sendMessageWithFiles called with:', { chatUidOrId, messageText, fileCount: files.length, messageType, aiAgentEnabled });
       const url = `/chat/sendmsg/${encodeURIComponent(chatUidOrId)}`;
       console.log('📎 chatService: Making request to:', url);
       console.log('📎 chatService: Full URL:', API_BASE_URL + url);
 
-      // Backend accepts only: message, message_type, file_path (binary)
+      // Backend accepts message, message_type, file_path (binary), and AI agent status
       const formData = new FormData();
       formData.append('message', messageText);
       formData.append('message_type', messageType);
+      // CRITICAL: Include AI agent status so backend knows whether to let bot respond
+      // "1" = AI agent ENABLED (bot will respond automatically)
+      // "0" = AI agent DISABLED (bot will NOT respond, only system messages)
+      formData.append('enable_ai_bot', aiAgentEnabled ? "1" : "0");
 
       // Choose the first file (API expects single file under key 'file_path')
       const file = files[0];
@@ -493,6 +509,8 @@ export const chatAPI = {
 
       formData.append('file_path', fileData);
       console.log('📎 Sending file as file_path:', file.name, file.mimeType, file.uri);
+      console.log('📎 AI Agent Status:', aiAgentEnabled ? "1" : "0");
+      console.log('📎 AI Behavior:', aiAgentEnabled ? "Bot responds automatically" : "Bot does not respond");
 
       // Debug: Log the actual FormData contents
       console.log('📎 chatService: FormData entries:');
@@ -534,15 +552,19 @@ export const chatAPI = {
   // Send a message with specific file type and path
   sendMessageWithFileType: async (chatUidOrId, messageText, file, messageType, aiAgentEnabled = true) => {
     try {
-      console.log('📁 chatService: sendMessageWithFileType called with:', { chatUidOrId, messageText, fileName: file.name, messageType });
+      console.log('📁 chatService: sendMessageWithFileType called with:', { chatUidOrId, messageText, fileName: file.name, messageType, aiAgentEnabled });
       const url = `/chat/sendmsg/${encodeURIComponent(chatUidOrId)}`;
       console.log('📁 chatService: Making request to:', url);
       console.log('📁 chatService: Full URL:', API_BASE_URL + url);
 
-      // Backend accepts only: message, message_type, file_path (binary)
+      // Backend accepts message, message_type, file_path (binary), and AI agent status
       const formData = new FormData();
       formData.append('message', messageText);
       formData.append('message_type', messageType);
+      // CRITICAL: Include AI agent status so backend knows whether to let bot respond
+      // "1" = AI agent ENABLED (bot will respond automatically)
+      // "0" = AI agent DISABLED (bot will NOT respond, only system messages)
+      formData.append('enable_ai_bot', aiAgentEnabled ? "1" : "0");
 
       const fileData = {
         uri: file.uri,
@@ -552,6 +574,8 @@ export const chatAPI = {
 
       formData.append('file_path', fileData);
       console.log('📁 Sending file as file_path:', file.name, file.mimeType, file.uri);
+      console.log('📁 AI Agent Status:', aiAgentEnabled ? "1" : "0");
+      console.log('📁 AI Behavior:', aiAgentEnabled ? "Bot responds automatically" : "Bot does not respond");
 
       console.log('📁 chatService: Request body (FormData):', formData);
 
@@ -680,7 +704,7 @@ export const chatAPI = {
       // Based on the API response structure where enable_ai_bot field indicates:
       // "1" = AI agent ENABLED (active)
       // "0" = AI agent DISABLED (inactive)
-      let aiStatus = 'active'; // default to active
+      let aiStatus = 'inactive'; // default to inactive (safer default)
 
       if (response && response.data && response.data.enable_ai_bot !== undefined) {
         aiStatus = response.data.enable_ai_bot === "1" ? 'active' : 'inactive';
@@ -694,7 +718,7 @@ export const chatAPI = {
         aiStatus = response.data.enabled ? 'active' : 'inactive';
         console.log('🔧 chatService: Using enabled field:', aiStatus);
       } else {
-        console.log('🔧 chatService: No AI agent status fields found, using default: active');
+        console.log('🔧 chatService: No AI agent status fields found, using default: inactive');
       }
 
       return {
@@ -708,11 +732,11 @@ export const chatAPI = {
       // Return a default status instead of throwing an error
       console.log('🔧 chatService: Returning default status due to API unavailability');
       return {
-        status: 'active', // Default to active
+        status: 'inactive', // Default to inactive (safer default)
         rawData: {
           error: 'API endpoints not available',
           fallback: true,
-          message: 'Using default active status'
+          message: 'Using default inactive status'
         }
       };
     }
@@ -909,7 +933,7 @@ export const chatAPI = {
   },
 
   // Send a message directly to user (bypass AI agent)
-  sendDirectMessage: async (chatUidOrId, messageText, files = []) => {
+  sendDirectMessage: async (chatUidOrId, messageText, files = [], aiAgentEnabled = false) => {
     try {
       const targetId = typeof chatUidOrId === 'string' || typeof chatUidOrId === 'number'
         ? String(chatUidOrId)
@@ -917,7 +941,8 @@ export const chatAPI = {
       console.log('📤 chatService: sendDirectMessage called with:', {
         chatUidOrId: targetId,
         textLen: (messageText || '').length,
-        fileCount: files.length
+        fileCount: files.length,
+        aiAgentEnabled
       });
 
       // Direct endpoint preferred path
@@ -1107,6 +1132,7 @@ export const chatAPI = {
         if (!messageText || !messageText.trim()) {
           throw new Error('Message text is required when no files are provided');
         }
+        console.log('🧠 chatService: Sending text message with AI agent status:', aiAgentEnabled ? "1" : "0");
         return await chatAPI.sendMessage(chatUidOrId, messageText.trim(), 'text', aiAgentEnabled);
       }
 
@@ -1135,6 +1161,7 @@ export const chatAPI = {
         mimeType: primaryFile.mimeType || primaryFile.type,
         size: primaryFile.size
       });
+      console.log('🧠 chatService: Sending file message with AI agent status:', aiAgentEnabled ? "1" : "0");
 
       // Send message with files
       return await chatAPI.sendMessageWithFiles(chatUidOrId, messageText || '', files, messageType, aiAgentEnabled);

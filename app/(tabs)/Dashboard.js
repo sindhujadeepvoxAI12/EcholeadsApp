@@ -40,10 +40,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authAPI } from '../services/authService';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Import contexts
 import { useAgents } from '../../contexts/AgentContext';
 import { useCampaigns } from '../../contexts/CampaignContext';
+
 
 // Import separate components
 import NotificationsModal from '../../components/NotificationsModal';
@@ -74,52 +76,52 @@ const generateMockData = (days = 7) => {
 
 // Compact Header Component
 const CompactHeader = ({ userName = "John Smith", onNotifications, onProfile, onLogout, notificationCount = 0 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(-30)).current;
-  const bellPulse = useRef(new Animated.Value(1)).current;
-  const insets = useSafeAreaInsets();
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideAnim = useRef(new Animated.Value(-30)).current;
+  // const bellPulse = useRef(new Animated.Value(1)).current;
+  // const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  // useEffect(() => {
+  //   Animated.parallel([
+  //     Animated.timing(fadeAnim, {
+  //       toValue: 1,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(slideAnim, {
+  //       toValue: 0,
+  //       duration: 500,
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
 
-    // Bell pulse animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(bellPulse, {
-          toValue: 1.2,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(bellPulse, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.delay(2000),
-      ])
-    ).start();
-  }, []);
+  //   // Bell pulse animation
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(bellPulse, {
+  //         toValue: 1.2,
+  //         duration: 1000,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(bellPulse, {
+  //         toValue: 1,
+  //         duration: 1000,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.delay(2000),
+  //     ])
+  //   ).start();
+  // }, []);
 
   return (
-    <Animated.View 
+    <View 
       style={[
         styles.compactHeader,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-          // paddingTop: Math.max(insets.top, 50) // Moderate minimum top padding
-        }
+        // {
+        //   // opacity: fadeAnim,
+        //   // transform: [{ translateY: slideAnim }],
+        //   // paddingTop: Math.max(insets.top, 50) // Moderate minimum top padding
+        // }
       ]}
     >
       <View style={styles.headerContent}>
@@ -139,9 +141,9 @@ const CompactHeader = ({ userName = "John Smith", onNotifications, onProfile, on
             onPress={onNotifications}
             activeOpacity={0.7}
           >
-            <Animated.View style={{ transform: [{ scale: bellPulse }] }}>
+            {/* <Animated.View style={{ transform: [{ scale: bellPulse }] }}> */}
               <Bell size={18} color="#FF9500" />
-            </Animated.View>
+            {/* </Animated.View> */}
                          {notificationCount > 0 && (
                <View style={styles.badge}>
                  <Text style={styles.badgeText}>{notificationCount}</Text>
@@ -166,7 +168,7 @@ const CompactHeader = ({ userName = "John Smith", onNotifications, onProfile, on
           </TouchableOpacity>
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 
@@ -675,8 +677,10 @@ const CleanCreditsSection = ({ credits, onAddCredits, onPurchase }) => {
 // Main Dashboard Component
 const DashboardScreen = () => {
   const router = useRouter();
+  const { logout, isAuthenticated, isLoading } = useAuth();
   const { agents } = useAgents();
   const { campaigns } = useCampaigns();
+
   const [currentWeek, setCurrentWeek] = useState(0);
   const [chartData, setChartData] = useState(generateMockData());
   const [credits, setCredits] = useState(0);
@@ -686,6 +690,14 @@ const DashboardScreen = () => {
   const [userName, setUserName] = useState("User");
   const [notificationCount, setNotificationCount] = useState(0);
   const totalWeeks = 4; // This will now represent 30-day periods
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      console.log('🔐 Dashboard: User not authenticated, redirecting to login');
+      router.replace('/login');
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   // Calculate dynamic stats from agents and campaigns data
   const calculateStats = () => {
@@ -870,23 +882,18 @@ const DashboardScreen = () => {
           style: "destructive",
           onPress: async () => {
             try {
-              console.log('Logout confirmed, calling API…');
-              // Call backend logout (best-effort)
-              try {
-                await authAPI.logout();
-                console.log('Logout API success');
-              } catch (apiErr) {
-                // Proceed even if API fails
-                console.warn('Logout API failed, proceeding to clear local state:', apiErr?.message);
+              console.log('Logout confirmed, using AuthContext…');
+              
+              // Use AuthContext to handle logout
+              const logoutResult = await logout();
+              
+              if (logoutResult.success) {
+                console.log('Logout successful via AuthContext');
+                // Navigate to login after successful logout
+                router.replace('/login');
+              } else {
+                throw new Error(logoutResult.error || 'Logout failed');
               }
-  
-              // Clear local auth state
-              await AsyncStorage.removeItem('authToken');
-              await AsyncStorage.removeItem('loggedInUser');
-              console.log('Cleared authToken and loggedInUser, navigating to /login');
-  
-              // Navigate to login page
-              router.replace('/login');
             } catch (error) {
               console.error('Error during logout:', error);
               Alert.alert("Error", "Failed to logout. Please try again.");
@@ -904,8 +911,34 @@ const DashboardScreen = () => {
 
 
 
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Text style={{
+            fontSize: 18,
+            color: '#333333',
+            marginBottom: 16
+          }}>
+            Checking authentication...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Don't render dashboard if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container} >
       
              {/* Compact Header */}
        <CompactHeader 
@@ -964,7 +997,7 @@ const DashboardScreen = () => {
         userName={userName}
         setUserName={setUserName}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

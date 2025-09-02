@@ -15,7 +15,7 @@ import {
   Modal,
   Platform
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Search,
   Filter,
@@ -123,32 +123,32 @@ const countryCodes = [
 
 // Animated Header Component
 const AnimatedHeader = ({ onAddNew }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(-30)).current;
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideAnim = useRef(new Animated.Value(-30)).current;
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
+  // useEffect(() => {
+  //   Animated.parallel([
+  //     Animated.timing(fadeAnim, {
+  //       toValue: 1,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(slideAnim, {
+  //       toValue: 0,
+  //       duration: 500,
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
+  // }, []);
 
   return (
-    <Animated.View 
+    <View 
       style={[
         styles.header,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }]
-        }
+        // {
+        //   opacity: fadeAnim,
+        //   transform: [{ translateY: slideAnim }]
+        // }
       ]}
     >
       <View style={styles.headerContent}>
@@ -160,14 +160,14 @@ const AnimatedHeader = ({ onAddNew }) => {
           <Plus size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 
 // Stats Cards Component
 const StatsCards = ({ agents }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideAnim = useRef(new Animated.Value(20)).current;
 
   const totalAgents = agents.length;
   const activeAgents = agents.filter(agent => agent.status === 'active').length;
@@ -197,35 +197,35 @@ const StatsCards = ({ agents }) => {
     }
   ];
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
+  // useEffect(() => {
+  //   Animated.parallel([
+  //     Animated.timing(fadeAnim, {
+  //       toValue: 1,
+  //       duration: 800,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(slideAnim, {
+  //       toValue: 0,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
+  // }, []);
 
   return (
-    <Animated.View
+    <View
       style={[
         styles.statsContainer,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }]
-        }
+        // {
+        //   opacity: fadeAnim,
+        //   transform: [{ translateY: slideAnim }]
+        // }
       ]}
     >
       {statsData.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
-          <Animated.View
+          <View
             key={stat.title}
             style={[
               styles.statCard,
@@ -239,27 +239,27 @@ const StatsCards = ({ agents }) => {
               <Text style={styles.statValue}>{stat.value}</Text>
             </View>
             <Text style={styles.statTitle}>{stat.title}</Text>
-          </Animated.View>
+          </View>
         );
       })}
-    </Animated.View>
+    </View>
   );
 };
 
 // Search and Filter Component
 const SearchAndFilter = ({ searchQuery, setSearchQuery, onFilterPress }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 700,
-      useNativeDriver: true,
-    }).start();
-  }, []);
+  // useEffect(() => {
+  //   Animated.timing(fadeAnim, {
+  //     toValue: 1,
+  //     duration: 700,
+  //     useNativeDriver: true,
+  //     }).start();
+  // }, []);
 
   return (
-    <Animated.View style={[styles.searchContainer, { opacity: fadeAnim }]}>
+    <View style={[styles.searchContainer, { opacity: 1 }]}>
       <View style={styles.searchInputContainer}>
         <Search size={18} color="#999" style={styles.searchIcon} />
         <TextInput
@@ -273,7 +273,7 @@ const SearchAndFilter = ({ searchQuery, setSearchQuery, onFilterPress }) => {
       <TouchableOpacity style={styles.filterButton} onPress={onFilterPress} activeOpacity={0.8}>
         <Filter size={18} color="#FF9500" />
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 };
 
@@ -305,54 +305,54 @@ const StatusBadge = ({ status }) => {
 
 // Agent Card Component
 const AgentCard = ({ agent, index }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const scaleAnim = useRef(new Animated.Value(0.95)).current;
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideAnim = useRef(new Animated.Value(30)).current;
+  // const scaleAnim = useRef(new Animated.Value(0.95)).current;
   const router = useRouter();
   const [showTestModal, setShowTestModal] = useState(false);
   const [selectedCode, setSelectedCode] = useState(countryCodes[0].value);
   const [phone, setPhone] = useState('');
   const [showCodeDropdown, setShowCodeDropdown] = useState(false);
 
-  useEffect(() => {
-    const delay = index * 150;
-    const timer = setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 8,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, delay);
+  // useEffect(() => {
+  //   const delay = index * 150;
+  //   const timer = setTimeout(() => {
+  //     Animated.parallel([
+  //       Animated.timing(fadeAnim, {
+  //         toValue: 1,
+  //         duration: 600,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(slideAnim, {
+  //         toValue: 0,
+  //         duration: 500,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.spring(scaleAnim, {
+  //         toValue: 1,
+  //         tension: 50,
+  //         friction: 8,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]).start();
+  //   }, delay);
 
-    return () => clearTimeout(timer);
-  }, [index]);
+  //   return () => clearTimeout(timer);
+  // }, [index]);
 
   const handleCardPress = () => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 0.98,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Animated.sequence([
+    //   Animated.timing(scaleAnim, {
+    //     toValue: 0.98,
+    //     duration: 100,
+    //     useNativeDriver: true,
+    //   }),
+    //   Animated.timing(scaleAnim, {
+    //     toValue: 1,
+    //     duration: 100,
+    //     useNativeDriver: true,
+    //   }),
+    // ]).start();
 
     Alert.alert(
       agent.name || 'AI Agent',
@@ -365,16 +365,16 @@ const AgentCard = ({ agent, index }) => {
   };
 
   return (
-    <Animated.View
+    <View
       style={[
         styles.agentCard,
-        {
-          opacity: fadeAnim,
-          transform: [
-            { translateY: slideAnim },
-            { scale: scaleAnim }
-          ]
-        }
+        // {
+        //   opacity: fadeAnim,
+        //   transform: [
+        //     { translateY: slideAnim },
+        //     { scale: scaleAnim }
+        //   ]
+        // }
       ]}
     >
       <TouchableOpacity onPress={handleCardPress} activeOpacity={1}>
@@ -556,7 +556,7 @@ const AgentCard = ({ agent, index }) => {
           </MotiView>
         </View>
       </Modal>
-    </Animated.View>
+    </View>
   );
 };
 
@@ -604,7 +604,7 @@ const HiredAgentsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       
       <AnimatedHeader onAddNew={() => router.push('/CreateAgent')} />
       
@@ -634,7 +634,7 @@ const HiredAgentsScreen = () => {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -648,7 +648,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    // paddingTop: 20,
+    paddingTop: 15, // Moderate padding top
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',

@@ -110,7 +110,8 @@ export const authAPI = {
     try {
       console.log('🔐 authService: Login attempt with credentials:', {
         email: credentials.email,
-        password: credentials.password ? '***' : 'undefined'
+        password: credentials.password ? '***' : 'undefined',
+        device_token: credentials.device_token ? `${credentials.device_token.substring(0, 30)}...` : 'undefined'
       });
       
       // Create FormData for login request
@@ -118,7 +119,22 @@ export const authAPI = {
       formData.append('email', credentials.email);
       formData.append('password', credentials.password);
       
+      // Add device_token if provided
+      if (credentials.device_token && credentials.device_token.trim() !== '') {
+        formData.append('device_token', credentials.device_token);
+        console.log('🔐 authService: Added device_token to FormData:', credentials.device_token);
+      } else {
+        console.log('🔐 authService: No valid device_token provided, skipping');
+      }
+      
       console.log('🔐 authService: Sending login request to:', `${API_BASE_URL}/auth/login`);
+      console.log('🔐 authService: FormData contents:', {
+        email: credentials.email,
+        password: credentials.password ? '***' : 'undefined',
+        device_token: credentials.device_token || 'not provided',
+        device_token_type: typeof credentials.device_token,
+        device_token_length: credentials.device_token ? credentials.device_token.length : 0
+      });
       
       const response = await api.post('/auth/login', formData, {
         headers: {

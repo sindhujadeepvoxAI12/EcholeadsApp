@@ -1,6 +1,8 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+// IMPORTANT: This layout ONLY applies to screens within the (tabs) directory
+// Standalone pages outside this directory will NOT show bottom navigation tabs
 export default function TabLayout() {
   return (
     <Tabs
@@ -8,6 +10,19 @@ export default function TabLayout() {
         tabBarActiveTintColor: '#FF9500',
         tabBarInactiveTintColor: '#8E8E93',
         headerShown: false,
+
+        keyboardHidesTabBar: false,
+        tabBarItemStyle: {
+          paddingVertical: 4,
+        },
+        tabBarLabelStyle: {
+          fontSize: 13,
+          fontWeight: '600',
+        },
+        // Ensure tabs are only shown on tab screens
+        tabBarShowLabel: true,
+        tabBarHideOnKeyboard: false,
+        // Fixed bottom navigation tabs
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
@@ -15,13 +30,16 @@ export default function TabLayout() {
           paddingBottom: 10,
           paddingTop: 8,
           height: 74,
-        },
-        tabBarItemStyle: {
-          paddingVertical: 4,
-        },
-        tabBarLabelStyle: {
-          fontSize: 13,
-          fontWeight: '600',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          zIndex: 1000,
         },
       }}
       initialRouteName="Dashboard"

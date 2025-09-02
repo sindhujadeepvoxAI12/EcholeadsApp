@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -6,7 +6,7 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   ScrollView,
-  Animated,
+  // Animated,
   Dimensions,
   StatusBar,
   KeyboardAvoidingView,
@@ -16,13 +16,16 @@ import {
 import { Eye, EyeOff, Mail, Lock, ChevronRight, Zap, User } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authAPI } from './services/authService';
+import { registerForPushNotificationsAsync } from './utils/notifications';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const { theme } = useTheme();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -33,59 +36,68 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [errors, setErrors] = useState({});
 
-  // Animation refs
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideUpAnim = useRef(new Animated.Value(50)).current;
-  const slideLeftAnim = useRef(new Animated.Value(30)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-
+  // Redirect if already authenticated
   useEffect(() => {
-    // Staggered animations
-    Animated.stagger(200, [
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideUpAnim, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.timing(slideLeftAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 20,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    if (!isLoading && isAuthenticated) {
+      console.log('🔐 Login: User already authenticated, redirecting to dashboard');
+      router.replace('/(tabs)/Dashboard');
+    }
+  }, [isAuthenticated, isLoading, router]);
 
-    // Continuous pulse animation for accent elements
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    pulse.start();
-  }, []);
+  // Animation refs
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideUpAnim = useRef(new Animated.Value(50)).current;
+  // const slideLeftAnim = useRef(new Animated.Value(30)).current;
+  // const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  // const buttonScale = useRef(new Animated.Value(1)).current;
+  // const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  // useEffect(() => {
+  //   // Staggered animations
+  //   Animated.stagger(200, [
+  //     Animated.parallel([
+  //       Animated.timing(fadeAnim, {
+  //         toValue: 1,
+  //         duration: 800,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(slideUpAnim, {
+  //         toValue: 0,
+  //         duration: 600,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]),
+  //     Animated.timing(slideLeftAnim, {
+  //       toValue: 0,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.spring(scaleAnim, {
+  //       toValue: 1,
+  //       tension: 20,
+  //       friction: 8,
+  //       useNativeDriver: true,
+  //     }),
+  //   ])
+  // ).start();
+
+  //   // Continuous pulse animation for accent elements
+  //   const pulse = Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(pulseAnim, {
+  //         toValue: 1.1,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(pulseAnim, {
+  //         toValue: 1,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   );
+  //   pulse.start();
+  // }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -105,44 +117,56 @@ export default function LoginScreen() {
   const handleSignIn = async () => {
     if (!validateForm()) return;
   
-    Animated.sequence([
-      Animated.timing(buttonScale, { toValue: 0.96, duration: 100, useNativeDriver: true }),
-      Animated.timing(buttonScale, { toValue: 1, duration: 150, useNativeDriver: true }),
-    ]).start();
-  
     setLoading(true);
   
     try {
+      // Get device token for push notifications
+      console.log('🔐 Login: Attempting to get device token...');
+      const deviceToken = await registerForPushNotificationsAsync();
+      console.log('🔐 Login: Device token received:', deviceToken);
+      console.log('🔐 Login: Device token type:', typeof deviceToken);
+      console.log('🔐 Login: Device token length:', deviceToken ? deviceToken.length : 0);
+      console.log('🔐 Login: Device token preview:', deviceToken ? `${deviceToken.substring(0, 50)}...` : 'null');
+      
       const loginData = {
         email: emailOrUsername.trim(),
         password: password,
+        device_token: deviceToken, // Send the Expo push token as device_token (null if not available)
       };
+      
+      console.log('🔐 Login: Sending login data:', {
+        email: loginData.email,
+        password: loginData.password ? '***' : 'undefined',
+        device_token: loginData.device_token ? `${loginData.device_token.substring(0, 20)}...` : 'empty'
+      });
   
       const res = await authAPI.login(loginData);
-console.log('Login response:', JSON.stringify(res));
+      console.log('Login response:', JSON.stringify(res));
 
-const token =
-  res.token ||
-  res.accessToken ||
-  res.data?.token ||
-  res.access_token ||
-  res.data?.access_token;
+      const token =
+        res.token ||
+        res.accessToken ||
+        res.data?.token ||
+        res.access_token ||
+        res.data?.access_token;
 
-const name = res.user?.name || res.user?.username || emailOrUsername.trim();
+      const name = res.user?.name || res.user?.username || emailOrUsername.trim();
 
-if (token) {
-  await AsyncStorage.setItem('authToken', String(token));
-  console.log('Saved authToken:', String(token).slice(0, 12) + '...');
-}
-await AsyncStorage.setItem('loggedInUser', String(name));
-  
-      setUsername(name);
-      setShowWelcome(true);
-  
-      setTimeout(() => {
-        setShowWelcome(false);
-        router.replace('/(tabs)/Dashboard');
-      }, 2000);
+      // Use AuthContext to handle login
+      const loginResult = await login(loginData, res);
+      
+      if (loginResult.success) {
+        setUsername(name);
+        setShowWelcome(true);
+
+        setTimeout(() => {
+          setShowWelcome(false);
+          // Navigate to dashboard after successful login
+          router.replace('/(tabs)/Dashboard');
+        }, 2000);
+      } else {
+        throw new Error(loginResult.error || 'Login failed');
+      }
     } catch (err) {
       const msg =
         err?.response?.data?.message ||
@@ -156,6 +180,28 @@ await AsyncStorage.setItem('loggedInUser', String(name));
   };
 
 
+
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Text style={{
+            fontSize: 18,
+            color: '#FFFFFF',
+            marginBottom: 16
+          }}>
+            Checking authentication...
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -171,32 +217,29 @@ await AsyncStorage.setItem('loggedInUser', String(name));
           keyboardShouldPersistTaps="handled"
         >
           {/* Header Section */}
-          <Animated.View 
+          <View 
             style={[
               styles.headerSection,
               {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideUpAnim }]
+                opacity: 1,
+                transform: [{ translateY: 0 }]
               }
             ]}
           >
             <View style={styles.headerBackground}>
-              <Animated.View 
+              <View 
                 style={[
                   styles.accentCircle1,
                   {
-                    transform: [{ scale: pulseAnim }]
+                    transform: [{ scale: 1 }]
                   }
                 ]}
               />
-              <Animated.View 
+              <View 
                 style={[
                   styles.accentCircle2,
                   {
-                    transform: [{ scale: pulseAnim.interpolate({
-                      inputRange: [1, 1.1],
-                      outputRange: [1.1, 1]
-                    }) }]
+                    transform: [{ scale: 1.1 }]
                   }
                 ]}
               />
@@ -213,17 +256,17 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 AI-Powered Lead Generation Platform
               </Text>
             </View>
-          </Animated.View>
+          </View>
 
           {/* Form Section */}
-          <Animated.View 
+          <View 
             style={[
               styles.formSection,
               {
-                opacity: fadeAnim,
+                opacity: 1,
                 transform: [
-                  { translateX: slideLeftAnim },
-                  { scale: scaleAnim }
+                  { translateX: 0 },
+                  { scale: 1 }
                 ]
               }
             ]}
@@ -299,7 +342,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 </View>
 
                 {/* Sign In Button */}
-                <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+                <View style={{ transform: [{ scale: 1 }] }}>
                   <TouchableOpacity
                     style={[styles.signInButton, loading && styles.signInButtonLoading]}
                     onPress={handleSignIn}
@@ -308,15 +351,12 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                     <View style={styles.buttonContent}>
                       {loading ? (
                         <View style={styles.loadingContainer}>
-                          <Animated.View 
+                          <View 
                             style={[
                               styles.loadingSpinner,
                               {
                                 transform: [{
-                                  rotate: fadeAnim.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: ['0deg', '360deg']
-                                  })
+                                  rotate: '0deg'
                                 }]
                               }
                             ]}
@@ -331,7 +371,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                       )}
                     </View>
                   </TouchableOpacity>
-                </Animated.View>
+                </View>
 
                 {/* Divider */}
                 <View style={styles.dividerContainer}>
@@ -352,17 +392,14 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 </View> */}
               </View>
             </View>
-          </Animated.View>
+          </View>
 
           {/* Footer */}
-          <Animated.View 
+          <View 
             style={[
               styles.footer,
               {
-                opacity: fadeAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 0.8]
-                })
+                opacity: 0.8
               }
             ]}
           >
@@ -372,18 +409,18 @@ await AsyncStorage.setItem('loggedInUser', String(name));
                 <Text style={styles.footerLink}>Sign up here</Text>
               </TouchableOpacity>
             </Text>
-          </Animated.View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
       
       {/* Welcome Message Overlay */}
       {showWelcome && (
-        <Animated.View 
+        <View 
           style={[
             styles.welcomeOverlay,
             {
-              opacity: fadeAnim,
-              transform: [{ scale: scaleAnim }]
+              opacity: 1,
+              transform: [{ scale: 1 }]
             }
           ]}
         >
@@ -396,7 +433,7 @@ await AsyncStorage.setItem('loggedInUser', String(name));
               You've successfully signed in to your account.
             </Text>
           </View>
-        </Animated.View>
+        </View>
       )}
     </View>
   );

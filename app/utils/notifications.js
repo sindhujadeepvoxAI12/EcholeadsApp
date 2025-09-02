@@ -20,23 +20,34 @@ Notifications.setNotificationHandler({
 // Register device for push notifications
 export async function registerForPushNotificationsAsync() {
   try {
+    console.log('📱 Notifications: Starting device token registration...');
+    
     if (!Device.isDevice) {
+      console.log('📱 Notifications: Not a physical device, cannot get push token');
       alert('Must use physical device for Push Notifications');
       return null;
     }
 
+    console.log('📱 Notifications: Physical device detected, checking permissions...');
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    console.log('📱 Notifications: Existing permission status:', existingStatus);
+    
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
+      console.log('📱 Notifications: Requesting notification permissions...');
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
+      console.log('📱 Notifications: New permission status:', finalStatus);
     }
+    
     if (finalStatus !== 'granted') {
+      console.log('📱 Notifications: Permission denied');
       alert('Failed to get push permission!');
       return null;
     }
 
     if (Platform.OS === 'android') {
+      console.log('📱 Notifications: Setting up Android notification channel...');
       await Notifications.setNotificationChannelAsync('default', {
         name: 'Default',
         importance: Notifications.AndroidImportance.MAX,
@@ -45,30 +56,29 @@ export async function registerForPushNotificationsAsync() {
       });
     }
 
+    console.log('📱 Notifications: Getting Expo push token...');
     const { data } = await Notifications.getExpoPushTokenAsync({
       projectId: PROJECT_ID,
     });
 
-    console.log('✅ Expo Push Token:', data);
-    return data;
+    console.log('📱 Notifications: Expo Push Token received:', data);
+    console.log('📱 Notifications: Token type:', typeof data);
+    console.log('📱 Notifications: Token length:', data ? data.length : 0);
+    
+    return data; // Return the actual token string
   } catch (e) {
     console.log('❌ registerForPushNotificationsAsync error:', e);
+    console.log('❌ Error details:', {
+      message: e.message,
+      stack: e.stack,
+      name: e.name
+    });
     alert('Error setting up notifications. Check logs.');
     return null;
   }
 }
 
-// Local test notification
-export async function sendLocalTestNotification() {
-  return Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Local shiva',
-      body: 'this is shiva testing122435 ✅',
-      data: { ping: true },
-    },
-    trigger: null,
-  });
-}
+
 
 // Trigger notification for new chat message
 export async function sendNewMessageNotification(chatName, messageText, chatId) {
@@ -86,6 +96,5 @@ export async function sendNewMessageNotification(chatName, messageText, chatId) 
 // Default export for the notifications module
 export default {
   registerForPushNotificationsAsync,
-  sendLocalTestNotification,
   sendNewMessageNotification,
 };

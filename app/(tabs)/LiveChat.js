@@ -24,7 +24,7 @@ import {
   Keyboard,
   RefreshControl
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
   Ionicons 
 } from '@expo/vector-icons';
@@ -63,6 +63,7 @@ import { authAPI } from '../services/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
+import { StatusBar } from 'expo-status-bar';
 // Removed WhatsAppMessagingManager UI import to run 24h logic in background only
 
 
@@ -146,135 +147,84 @@ const formatTimestamp = (input) => {
 
 // Chat List Item Component
 const ChatListItem = ({ chat, isSelected, onPress, isAdmin, index }) => {
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const slideAnim = useRef(new Animated.Value(50)).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const cardGlowAnim = useRef(new Animated.Value(0)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
-  const colorAnim = useRef(new Animated.Value(0)).current;
-  const depthAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 100,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400 + (index * 100),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 300 + (index * 100),
-        useNativeDriver: true,
-      }),
-    ]).start();
 
-    // Pulse animation for unread messages
-    if (chat.unreadCount > 0) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 1.1,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }
 
-    // Card glow animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(cardGlowAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(cardGlowAnim, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
 
-    // Subtle rotation animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, {
-          toValue: 1,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: 0,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
 
-    // Enhanced shadow animation for 3D effect
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(depthAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(depthAnim, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
+  //   // Card glow animation
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(cardGlowAnim, {
+  //         toValue: 1,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //         Animated.timing(cardGlowAnim, {
+  //           toValue: 0,
+  //           duration: 2000,
+  //           useNativeDriver: true,
+  //         }),
+  //       ])
+  //     ).start();
+
+  //   // Subtle rotation animation
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(rotateAnim, {
+  //         toValue: 1,
+  //         duration: 3000,
+  //         useNativeDriver: true,
+  //       }),
+  //         Animated.timing(rotateAnim, {
+  //           toValue: 0,
+  //           duration: 3000,
+  //           useNativeDriver: true,
+  //         }),
+  //       ])
+  //     ).start();
+
+  //   // Enhanced shadow animation for 3D effect
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(depthAnim, {
+  //         toValue: 1,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //         Animated.timing(depthAnim, {
+  //           toValue: 0,
+  //           duration: 2000,
+  //           useNativeDriver: true,
+  //         }),
+  //       ])
+  //     ).start();
+  // }, []);
 
   return (
-    <Animated.View 
+    <View 
       style={[
         styles.chatListItemContainer,
         {
-          opacity: opacityAnim,
+          opacity: 1,
           transform: [
-            { scale: scaleAnim },
-            { translateY: slideAnim },
+            { scale: 1 },
+            { translateY: 0 },
             { 
-              rotate: rotateAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: ['0deg', '1deg']
-              })
+              rotate: '0deg'
             }
           ]
         }
       ]}
     >
-      <Animated.View
+      <View
         style={[
           styles.chatCardGlow,
           {
-            opacity: cardGlowAnim,
-            transform: [{ scale: 1 + (cardGlowAnim * 0.02) }],
-            shadowOpacity: depthAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.1, 0.3]
-            }),
-            shadowRadius: depthAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [8, 12]
-            }),
+            opacity: 0,
+            transform: [{ scale: 1 }],
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
           }
         ]}
       />
@@ -306,97 +256,92 @@ const ChatListItem = ({ chat, isSelected, onPress, isAdmin, index }) => {
         </View>
         
         {chat.unreadCount > 0 && (
-          <Animated.View 
+          <View 
             style={[
               styles.unreadBadge,
-              { transform: [{ scale: pulseAnim }] }
+              { transform: [{ scale: 1 }] }
             ]}
           >
             <Text style={styles.unreadCount}>{chat.unreadCount}</Text>
-          </Animated.View>
+          </View>
         )}
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 };
 
 // Chat Header Component
 const ChatHeader = ({ chat, isAdmin, globalAgentEnabled, onToggleGlobalAgent, onBack, onClearChat }) => {
-  const slideAnim = useRef(new Animated.Value(-50)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
-  const gradientAnim = useRef(new Animated.Value(0)).current;
   const [showMenu, setShowMenu] = useState(false);
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 100,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  // useEffect(() => {
+  //   Animated.parallel([
+  //     Animated.timing(slideAnim, {
+  //       toValue: 0,
+  //       duration: 400,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(fadeAnim, {
+  //       toValue: 1,
+  //       duration: 500,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.spring(scaleAnim, {
+  //       toValue: 1,
+  //       tension: 100,
+  //       friction: 8,
+  //       useNativeDriver: true,
+  //       }),
+  //   ]).start();
 
-    // Gradient animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(gradientAnim, {
-          toValue: 1,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(gradientAnim, {
-          toValue: 0,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+  //   // Gradient animation
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(gradientAnim, {
+  //         toValue: 1,
+  //         duration: 3000,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(gradientAnim, {
+  //         toValue: 0,
+  //         duration: 3000,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   ).start();
 
-    // Glow animation for AI toggle
-    if (globalAgentEnabled) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }
-  }, [globalAgentEnabled]);
+  //   // Glow animation for AI toggle
+  //   if (globalAgentEnabled) {
+  //     Animated.loop(
+  //       Animated.sequence([
+  //         Animated.timing(glowAnim, {
+  //           toValue: 1,
+  //           duration: 2000,
+  //           useNativeDriver: true,
+  //         }),
+  //         Animated.timing(glowAnim, {
+  //           toValue: 0,
+  //           duration: 2000,
+  //           useNativeDriver: true,
+  //         }),
+  //       ])
+  //     ).start();
+  //   }
+  // }, [globalAgentEnabled]);
 
     
 
 
 
   return (
-    <Animated.View 
+    <View 
       style={[
         styles.chatHeader,
         {
-          opacity: fadeAnim,
+          opacity: 1,
           transform: [
-            { translateX: slideAnim },
-            { scale: scaleAnim }
+            { translateX: 0 },
+            { scale: 1 }
           ]
         }
       ]}
@@ -461,7 +406,7 @@ const ChatHeader = ({ chat, isAdmin, globalAgentEnabled, onToggleGlobalAgent, on
           </>
         )}
       </ExpoLinearGradient>
-    </Animated.View>
+    </View>
   );
 };
 
@@ -481,82 +426,76 @@ const MessageBubble = ({ message, isUser, index }) => {
   const isUserMessage = message.sender === 'user'; // RIGHT side (system/bot messages)
   const isReceivedMessage = message.sender === 'received'; // LEFT side (user/customer messages)
   
-  const scaleAnim = useRef(new Animated.Value(0.6)).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(isUserMessage ? 30 : -30)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
-  const cardGlowAnim = useRef(new Animated.Value(0)).current;
-  const bounceAnim = useRef(new Animated.Value(0)).current;
-  const colorAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 100,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 300 + (index * 50),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400 + (index * 50),
-        useNativeDriver: true,
-      }),
-    ]).start();
 
-    // Bounce animation
-    Animated.sequence([
-      Animated.timing(bounceAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(bounceAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  // useEffect(() => {
+  //   Animated.parallel([
+  //     Animated.spring(scaleAnim, {
+  //       toValue: 1,
+  //       tension: 100,
+  //       friction: 8,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(opacityAnim, {
+  //       toValue: 1,
+  //       duration: 300 + (index * 50),
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(slideAnim, {
+  //       toValue: 0,
+  //       duration: 400 + (index * 50),
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
 
-    // Card glow animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(cardGlowAnim, {
-          toValue: 1,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(cardGlowAnim, {
-          toValue: 0,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+  //   // Bounce animation
+  //   Animated.sequence([
+  //     Animated.timing(bounceAnim, {
+  //       toValue: 1,
+  //       duration: 200,
+  //       useNativeDriver: true,
+  //     }),
+  //     Animated.timing(bounceAnim, {
+  //       toValue: 0,
+  //       duration: 200,
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
 
-    // Glow animation for AI messages
-    if (message.isAI) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }
-  }, []);
+  //   // Card glow animation
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(cardGlowAnim, {
+  //         toValue: 1,
+  //         duration: 3000,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(cardGlowAnim, {
+  //         toValue: 0,
+  //       duration: 3000,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   ).start();
+
+  //   // Glow animation for AI messages
+  //   if (message.isAI) {
+  //     Animated.loop(
+  //       Animated.sequence([
+  //         Animated.timing(glowAnim, {
+  //           toValue: 1,
+  //           duration: 2000,
+  //           useNativeDriver: true,
+  //         }),
+  //       Animated.timing(glowAnim, {
+  //         toValue: 0,
+  //         duration: 2000,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   ).start();
+  //   }
+  // }, []);
 
   const renderStatusIcon = () => {
     if (message.status === 'sending') {
@@ -583,30 +522,27 @@ const MessageBubble = ({ message, isUser, index }) => {
   });
   
   return (
-    <Animated.View 
+    <View 
       style={[
         styles.messageContainer,
         {
-          opacity: opacityAnim,
+          opacity: 1,
           transform: [
-            { scale: scaleAnim },
-            { translateX: slideAnim },
+            { scale: 1 },
+            { translateX: 0 },
             { 
-              translateY: bounceAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, -5]
-              })
+              translateY: 0
             }
           ]
         }
       ]}
     >
-      <Animated.View
+      <View
         style={[
           styles.messageCardGlow,
           {
-            opacity: cardGlowAnim,
-            transform: [{ scale: 1 + (cardGlowAnim * 0.05) }]
+            opacity: 0,
+            transform: [{ scale: 1 }]
           }
         ]}
       />
@@ -621,12 +557,12 @@ const MessageBubble = ({ message, isUser, index }) => {
         })}
         {/* AI Icon Logic: Only show for system/agent messages that were sent when AI agent was enabled */}
         {message.isAI === true && message.aiStatusAtSend === true && isUserMessage && (
-          <Animated.View 
+          <View 
             style={[
               styles.aiIndicator,
               {
-                shadowOpacity: glowAnim * 0.5,
-                shadowRadius: 4 + (glowAnim * 2),
+                shadowOpacity: 0.5,
+                shadowRadius: 4,
               }
             ]}
           >
@@ -638,7 +574,7 @@ const MessageBubble = ({ message, isUser, index }) => {
             >
               <Bot size={12} color="#fff" />
             </ExpoLinearGradient>
-          </Animated.View>
+          </View>
         )}
         
         <Text style={[
@@ -684,69 +620,66 @@ const MessageBubble = ({ message, isUser, index }) => {
           )}
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 
 // Agent Notification Component
 const AgentNotification = ({ visible, message, onClose }) => {
-  const slideAnim = useRef(new Animated.Value(-100)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.spring(slideAnim, {
-          toValue: 0,
-          tension: 100,
-          friction: 8,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 100,
-          friction: 8,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: -100,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 0.8,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [visible]);
+  // useEffect(() => {
+  //   if (visible) {
+  //     Animated.parallel([
+  //       Animated.spring(slideAnim, {
+  //         toValue: 0,
+  //         tension: 100,
+  //         friction: 8,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.spring(scaleAnim, {
+  //         toValue: 1,
+  //         tension: 100,
+  //         friction: 8,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(opacityAnim, {
+  //         toValue: 1,
+  //         duration: 300,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]).start();
+  //   } else {
+  //     Animated.parallel([
+  //       Animated.timing(slideAnim, {
+  //         toValue: -100,
+  //         duration: 200,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(scaleAnim, {
+  //         toValue: 0.8,
+  //         duration: 200,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(opacityAnim, {
+  //         toValue: 0,
+  //         duration: 200,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]).start();
+  //   }
+  // }, [visible]);
 
   if (!visible) return null;
 
   return (
-    <Animated.View
+    <View
       style={[
         styles.agentNotification,
         {
-          opacity: opacityAnim,
+          opacity: 1,
           transform: [
-            { translateY: slideAnim },
-            { scale: scaleAnim }
+            { translateY: 0 },
+            { scale: 1 }
           ]
         }
       ]}
@@ -763,7 +696,7 @@ const AgentNotification = ({ visible, message, onClose }) => {
           <X size={16} color="#fff" />
         </TouchableOpacity>
       </ExpoLinearGradient>
-    </Animated.View>
+    </View>
   );
 };
 
@@ -780,7 +713,7 @@ const LiveChatScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAgentNotification, setShowAgentNotification] = useState(false);
   const [agentNotificationMessage, setAgentNotificationMessage] = useState('');
-  const [globalAgentEnabled, setGlobalAgentEnabled] = useState(true); // Global agent mode
+  const [globalAgentEnabled, setGlobalAgentEnabled] = useState(false); // Will be loaded from AsyncStorage
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -788,7 +721,7 @@ const LiveChatScreen = () => {
   const insets = useSafeAreaInsets();
 
   // Add new state for AI agent status
-  const [aiAgentStatus, setAiAgentStatus] = useState('active'); // 'active' or 'inactive'
+  const [aiAgentStatus, setAiAgentStatus] = useState('inactive'); // Will be loaded from AsyncStorage
   const [updatingAgent, setUpdatingAgent] = useState(false);
 
   // Add missing state variables
@@ -807,7 +740,7 @@ const LiveChatScreen = () => {
   
   // WhatsApp Messaging Manager state removed (background-only behavior)
   
-  // Remove auto-refresh and notification states
+
   const lastMessageCountRef = useRef(0); // Track last message count for smart refresh
   const notificationTimerRef = useRef(null); // For showing notifications
   
@@ -817,18 +750,8 @@ const LiveChatScreen = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [messageType, setMessageType] = useState('text'); // 'text', 'image', 'file', 'folder'
   const inputRef = useRef(null);
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
-  const inputGlowAnim = useRef(new Animated.Value(0)).current;
-  const colorAnim = useRef(new Animated.Value(0)).current;
   
-  // Remove auto-refresh useEffect
-  useEffect(() => {
-    // No auto-refresh functionality
-    return () => {
-      // Cleanup only
-    };
-  }, [selectedChat]);
+
   
   // Handle app state changes (background/foreground)
   const handleAppStateChange = async (nextAppState) => {
@@ -838,7 +761,7 @@ const LiveChatScreen = () => {
       currentSelectedChat: selectedChat ? 'Yes' : 'No'
     });
 
-    // If app is going to background, no need to stop auto-refresh
+
     if (nextAppState.match(/inactive|background/)) {
       console.log('📱 App going to background');
       
@@ -917,24 +840,9 @@ const LiveChatScreen = () => {
     setAppState(nextAppState);
   };
   
-  // Remove smart auto-refresh function
-  // const startSmartAutoRefresh = useCallback(() => { ... });
+
   
-  // Remove startAutoRefresh function
-  // const startAutoRefresh = useCallback(() => { ... });
-  
-  // Remove stopAutoRefresh function
-  // const stopAutoRefresh = useCallback(() => { ... });
-  
-  // Removed refreshSelectedChat per request (auto/manual refresh removed)
-  
-  // Removed refreshChatList per request
-  
-  // Removed showNewMessageNotification per request
-  
-  // Manual refresh removed per request
-  
-  // Removed auto-refresh functionality
+
   
   // Enhanced notification display function
   const displayAgentNotification = (message, duration = 3000) => {
@@ -968,22 +876,6 @@ const LiveChatScreen = () => {
             }
           ]
         );
-        return;
-      }
-      
-      // If we've already loaded data successfully, just refresh without auth check
-      if (hasLoadedData) {
-        console.log('🔄 LiveChat: Data already loaded, refreshing without auth check...');
-        try {
-          await fetchChatList();
-          await fetchAIAgentStatus();
-          
-          console.log('✅ LiveChat: Manual refresh completed successfully');
-          displayAgentNotification('Chat list refreshed successfully', 2000);
-        } catch (refreshError) {
-          console.error('❌ LiveChat: Manual refresh failed:', refreshError);
-          setError('Refresh failed. Please try again.');
-        }
         return;
       }
       
@@ -1140,10 +1032,43 @@ const LiveChatScreen = () => {
 
 
 
+  // Load initial AI agent status from AsyncStorage
+  const loadInitialAIAgentStatus = async () => {
+    try {
+      const storedStatus = await AsyncStorage.getItem('aiAgentStatus');
+      if (storedStatus) {
+        console.log('🔧 loadInitialAIAgentStatus: Loading stored status:', storedStatus);
+        setAiAgentStatus(storedStatus);
+        setGlobalAgentEnabled(storedStatus === 'active');
+      } else {
+        console.log('🔧 loadInitialAIAgentStatus: No stored status, keeping defaults');
+      }
+    } catch (error) {
+      console.error('❌ Error loading initial AI agent status:', error);
+    }
+  };
+
   // Add this function after your existing functions
   const fetchAIAgentStatus = async () => {
     try {
-      console.log('🔧 fetchAIAgentStatus: Fetching AI agent status from API...');
+      console.log('🔧 fetchAIAgentStatus: Checking AI agent status...');
+      
+      // First check if we already have a valid status and don't need to fetch
+      if (aiAgentStatus === 'active' || aiAgentStatus === 'inactive') {
+        console.log('🔧 fetchAIAgentStatus: Current status is valid, skipping API call to preserve user setting');
+        setIsInitialized(true);
+        return;
+      }
+      
+      // Check if we have a stored status first
+      const storedStatus = await AsyncStorage.getItem('aiAgentStatus');
+      if (storedStatus) {
+        console.log('🔧 fetchAIAgentStatus: Using stored status, skipping API call:', storedStatus);
+        setAiAgentStatus(storedStatus);
+        setGlobalAgentEnabled(storedStatus === 'active');
+        setIsInitialized(true);
+        return;
+      }
       
       // First try to get status from API
       try {
@@ -1159,36 +1084,12 @@ const LiveChatScreen = () => {
             console.log('🔧 fetchAIAgentStatus: Using fallback status from API');
           }
           
-          // Check if status actually changed
-          const statusChanged = newStatus !== aiAgentStatus;
-          if (statusChanged) {
-            console.log('🔧 fetchAIAgentStatus: Status changed from', aiAgentStatus, 'to', newStatus);
-            
-            // Update local state
-            setAiAgentStatus(newStatus);
-            setGlobalAgentEnabled(newStatus === 'active');
-            
-            // Update UI state
-            updateChatsAgentStatus(newStatus === 'active');
-            
-            // Show notification if status was changed externally
-            if (aiAgentStatus !== 'active' && aiAgentStatus !== 'inactive') {
-              // This is the first time loading, don't show notification
-            } else {
-              const notificationMessage = newStatus === 'active' ? 
-                'AI Agent has been activated externally' : 
-                'AI Agent has been deactivated externally';
-              setAgentNotificationMessage(notificationMessage);
-              setShowAgentNotification(true);
-              setTimeout(() => setShowAgentNotification(false), 3000);
-            }
-          } else {
-            // Status didn't change, just ensure consistency without triggering re-renders
-            console.log('🔧 fetchAIAgentStatus: Status unchanged, ensuring consistency');
-            if (globalAgentEnabled !== (newStatus === 'active')) {
-              setGlobalAgentEnabled(newStatus === 'active');
-            }
-          }
+          // Update local state
+          setAiAgentStatus(newStatus);
+          setGlobalAgentEnabled(newStatus === 'active');
+          
+          // Update UI state
+          updateChatsAgentStatus(newStatus === 'active');
           
           // Store in AsyncStorage for offline use
           await AsyncStorage.setItem('aiAgentStatus', newStatus);
@@ -1201,23 +1102,23 @@ const LiveChatScreen = () => {
       }
       
       // Fallback to stored status if API fails
-      const storedStatus = await AsyncStorage.getItem('aiAgentStatus');
-      if (storedStatus) {
-        console.log('🔧 fetchAIAgentStatus: Using stored status:', storedStatus);
-        setAiAgentStatus(storedStatus);
-        setGlobalAgentEnabled(storedStatus === 'active');
+      const fallbackStatus = await AsyncStorage.getItem('aiAgentStatus');
+      if (fallbackStatus) {
+        console.log('🔧 fetchAIAgentStatus: Using stored status:', fallbackStatus);
+        setAiAgentStatus(fallbackStatus);
+        setGlobalAgentEnabled(fallbackStatus === 'active');
       } else {
-        // Default to active if no stored status
-        console.log('🔧 fetchAIAgentStatus: No stored status, defaulting to active');
-        setAiAgentStatus('active');
-        setGlobalAgentEnabled(true);
-        await AsyncStorage.setItem('aiAgentStatus', 'active');
+        // Default to inactive if no stored status (first time loading)
+        console.log('🔧 fetchAIAgentStatus: No stored status, defaulting to inactive');
+        setAiAgentStatus('inactive');
+        setGlobalAgentEnabled(false);
+        await AsyncStorage.setItem('aiAgentStatus', 'inactive');
       }
     } catch (error) {
       console.error('❌ Error fetching AI agent status:', error);
-      // Set default values on error
-      setAiAgentStatus('active');
-      setGlobalAgentEnabled(true);
+      // Set default values on error - use inactive as safer default
+      setAiAgentStatus('inactive');
+      setGlobalAgentEnabled(false);
     } finally {
       // Mark as initialized to allow reclassification
       setIsInitialized(true);
@@ -1228,6 +1129,9 @@ const LiveChatScreen = () => {
   useEffect(() => {
     console.log('🚀 LiveChat: Component mounted, chatAPI available:', !!chatAPI);
     console.log('🚀 LiveChat: chatAPI methods:', Object.keys(chatAPI || {}));
+    
+    // Load initial AI agent status from AsyncStorage first
+    loadInitialAIAgentStatus();
     
     // Check authentication status first - be less aggressive
     const checkAuthAndFetch = async () => {
@@ -1344,7 +1248,7 @@ const LiveChatScreen = () => {
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     
     // Cleanup function to reset state when component unmounts
-    return () => {
+ return () => {
       setSelectedChat(null);
       setChats([]);
       setError(null);
@@ -1352,12 +1256,19 @@ const LiveChatScreen = () => {
       subscription?.remove();
       // Clear token refresh interval
       clearInterval(tokenRefreshInterval);
+
     };
   }, []);
 
 
 
-  // Removed auto-refresh on focus per request
+
+
+
+
+
+
+
 
      const filteredChats = chats.filter(chat => {
        if (!chat || !chat.name) return false;
@@ -1376,7 +1287,8 @@ const LiveChatScreen = () => {
        return messages.map((msg, index) => {
          // Extract basic fields
          const text = msg.text || msg.message || msg.body || msg.content || '';
-         const timestamp = msg.created_at || msg.time || msg.timestamp || new Date();
+         // Use created_at as primary timestamp, fallback to updated_at, then other fields
+         const timestamp = msg.created_at || msg.updated_at || msg.time || msg.timestamp || new Date();
          
          // Log the raw message for debugging
          console.log(`🔍 Message ${index}:`, {
@@ -1505,6 +1417,9 @@ const LiveChatScreen = () => {
            sender: messageSender,
            timestamp: formatTimestamp(timestamp),
            createdAt: new Date(timestamp),
+           // Preserve both timestamp fields from API
+           created_at: msg.created_at || timestamp,
+           updated_at: msg.updated_at || msg.created_at || timestamp,
            isAI: finalShouldShowAI, // Only show AI badge on confirmed system/agent messages
            aiStatusAtSend: isAgentEnabled, // Store AI agent status when message was classified
            status: msg.status || 'read'
@@ -1520,27 +1435,19 @@ const LiveChatScreen = () => {
          messageTrimmed: message.trim(),
          messageLength: message.length,
          selectedFiles: selectedFiles.length,
-         disabled: globalAgentEnabled,
-         canSend: (message.trim() || selectedFiles.length > 0) && !globalAgentEnabled
+         aiAgentEnabled: globalAgentEnabled,
+         aiAgentStatus: aiAgentStatus,
+         canSend: (message.trim() || selectedFiles.length > 0),
+         inputDisabled: globalAgentEnabled,
+         sendButtonDisabled: globalAgentEnabled || (!message.trim() && selectedFiles.length === 0)
        });
        
-       if ((message.trim() || selectedFiles.length > 0) && !globalAgentEnabled) {
+       // FIXED: Allow sending messages regardless of AI agent status
+       // When AI agent is enabled: system can send messages, bot will respond automatically
+       // When AI agent is disabled: system can send messages, bot won't respond
+       if (message.trim() || selectedFiles.length > 0) {
          console.log('🔍 ChatInput: Proceeding to send message');
          
-         // Send button animation
-         Animated.sequence([
-           Animated.timing(scaleAnim, {
-             toValue: 0.8,
-             duration: 100,
-             useNativeDriver: true,
-           }),
-           Animated.timing(scaleAnim, {
-             toValue: 1,
-             duration: 100,
-             useNativeDriver: true,
-           }),
-         ]).start();
-
          // Debug: Log what's being sent
          console.log('🔍 ChatInput: Sending message with:', {
            message: message,
@@ -1569,7 +1476,7 @@ const LiveChatScreen = () => {
          setSelectedFiles([]);
          setMessageType('text'); // Reset to text type
        } else {
-         console.log('🔍 ChatInput: Cannot send - message:', message.trim(), 'files:', selectedFiles.length, 'disabled:', globalAgentEnabled);
+         console.log('🔍 ChatInput: Cannot send - no message or files');
          console.log('🔍 ChatInput: Send conditions not met');
        }
      };
@@ -1882,48 +1789,48 @@ const LiveChatScreen = () => {
      };
 
      // Input glow animation
-     useEffect(() => {
-       if (message.trim() || selectedFiles.length > 0) {
-         Animated.loop(
-           Animated.sequence([
-             Animated.timing(inputGlowAnim, {
-               toValue: 1,
-               duration: 2000,
-               useNativeDriver: true,
-             }),
-             Animated.timing(inputGlowAnim, {
-               toValue: 0,
-               duration: 2000,
-               useNativeDriver: true,
-             }),
-           ])
-         ).start();
-       } else {
-         inputGlowAnim.setValue(0);
-       }
-     }, [message, selectedFiles]);
+     // useEffect(() => {
+     //   if (message.trim() || selectedFiles.length > 0) {
+     //     Animated.loop(
+     //       Animated.sequence([
+     //         Animated.timing(inputGlowAnim, {
+     //           toValue: 1,
+     //           duration: 2000,
+     //           useNativeDriver: true,
+     //         }),
+     //         Animated.timing(inputGlowAnim, {
+     //           toValue: 0,
+     //           duration: 2000,
+     //           useNativeDriver: true,
+     //         }),
+     //       ])
+     //     ).start();
+     //   } else {
+     //     inputGlowAnim.setValue(0);
+     //   }
+     // }, [message, selectedFiles]);
 
      // Glow animation for active send button
-     useEffect(() => {
-       if ((message.trim() || selectedFiles.length > 0) && !globalAgentEnabled) {
-         Animated.loop(
-           Animated.sequence([
-             Animated.timing(glowAnim, {
-               toValue: 1,
-               duration: 1500,
-               useNativeDriver: true,
-             }),
-             Animated.timing(glowAnim, {
-               toValue: 0,
-               duration: 1500,
-               useNativeDriver: true,
-             }),
-           ])
-         ).start();
-       } else {
-         glowAnim.setValue(0);
-       }
-     }, [message, selectedFiles, globalAgentEnabled]);
+     // useEffect(() => {
+     //   if ((message.trim() || selectedFiles.length > 0) && !globalAgentEnabled) {
+     //     Animated.loop(
+     //       Animated.sequence([
+     //         Animated.timing(glowAnim, {
+     //           toValue: 1,
+     //           duration: 1500,
+     //           useNativeDriver: true,
+     //         }),
+     //         Animated.timing(glowAnim, {
+     //           toValue: 0,
+     //           duration: 1500,
+     //           useNativeDriver: true,
+     //         }),
+     //       ])
+     //     ).start();
+     //   } else {
+     //     glowAnim.setValue(0);
+     //   }
+     // }, [message, selectedFiles, globalAgentEnabled]);
 
      const handleChatSelect = async (chat) => {
       console.log('🚀 handleChatSelect: Starting with chat:', chat);
@@ -2204,6 +2111,18 @@ const LiveChatScreen = () => {
       setShowAgentNotification(true);
       setTimeout(() => setShowAgentNotification(false), 5000);
     }
+    
+    // After chat is loaded, check for missed messages if AI agent is enabled
+    if (globalAgentEnabled && selectedChat && selectedChat.messages && selectedChat.messages.length > 0) {
+      console.log('🤖 Chat selected with AI agent enabled - checking for missed user messages...');
+      setTimeout(async () => {
+        try {
+          await checkAndRespondToMissedMessages();
+        } catch (error) {
+          console.error('❌ Error checking missed messages on chat select:', error);
+        }
+      }, 2000); // Wait 2 seconds after chat loads to check for missed messages
+    }
   };
 
   // Removed manual new-message checks per request
@@ -2233,22 +2152,33 @@ const LiveChatScreen = () => {
         response.disable_ai_agent !== undefined ||
         response.fallback === true
       )) {
-        // Success - update local state
-        const newGlobalState = !globalAgentEnabled;
-        setGlobalAgentEnabled(newGlobalState);
-        setAiAgentStatus(newStatus);
+        // Parse the actual AI agent status from the API response
+        let actualAiStatus = newStatus; // Default to what we sent
+        let actualGlobalState = !globalAgentEnabled; // Default to what we expect
         
-        console.log('🔧 AI Agent status updated to:', newGlobalState);
+        // Check if response contains enable_ai_bot field (the actual API response format)
+        if (response.data && response.data.enable_ai_bot !== undefined) {
+          // API returns enable_ai_bot: "1" for enabled, "0" for disabled
+          actualAiStatus = response.data.enable_ai_bot === "1" ? 'active' : 'inactive';
+          actualGlobalState = response.data.enable_ai_bot === "1";
+          console.log('🔧 API returned enable_ai_bot:', response.data.enable_ai_bot, '-> status:', actualAiStatus);
+        }
+        
+        // Update local state based on actual API response
+        setGlobalAgentEnabled(actualGlobalState);
+        setAiAgentStatus(actualAiStatus);
+        
+        console.log('🔧 AI Agent status updated to:', actualGlobalState);
         console.log('🔧 Messages will be reclassified automatically...');
         
         // Store in AsyncStorage
-        await AsyncStorage.setItem('aiAgentStatus', newStatus);
+        await AsyncStorage.setItem('aiAgentStatus', actualAiStatus);
         
         // Update UI state
-        updateChatsAgentStatus(newGlobalState);
+        updateChatsAgentStatus(actualGlobalState);
         
         // Show success notification
-        let successMessage = newGlobalState ? 'AI Agent activated successfully' : 'AI Agent deactivated successfully';
+        let successMessage = actualGlobalState ? 'AI Agent activated successfully' : 'AI Agent deactivated successfully';
         
         // Add fallback indicator if using mock response
         if (response.fallback === true) {
@@ -2258,6 +2188,18 @@ const LiveChatScreen = () => {
         setAgentNotificationMessage(successMessage);
         setShowAgentNotification(true);
         setTimeout(() => setShowAgentNotification(false), 3000);
+        
+        // If AI agent was just enabled, check for missed user messages and respond
+        if (actualGlobalState && selectedChat) {
+          console.log('🤖 AI Agent enabled - checking for missed user messages...');
+          setTimeout(async () => {
+            try {
+              await checkAndRespondToMissedMessages(selectedChat);
+            } catch (error) {
+              console.error('❌ Error checking missed messages:', error);
+            }
+          }, 1000); // Wait 1 second after enabling to check for missed messages
+        }
         
         // Status verification removed to prevent unnecessary API calls
         console.log('🔧 Status update completed successfully');
@@ -2285,25 +2227,137 @@ const LiveChatScreen = () => {
     }
   };
 
-     // Helper function to update all chats
-   const updateChatsAgentStatus = (newStatus) => {
-     setChats(prev => prev.map(chat => {
-       if (!chat || (!chat.id && !chat.chat_id && !chat.uid)) return chat;
-       return {
-         ...chat,
-         agentEnabled: newStatus
-       };
-     }));
-     
-     if (selectedChat && (selectedChat.id || selectedChat.chat_id || selectedChat.uid)) {
-       setSelectedChat(prev => ({ ...prev, agentEnabled: newStatus }));
-     }
-   };
+       // Helper function to update all chats
+  const updateChatsAgentStatus = (newStatus) => {
+    setChats(prev => prev.map(chat => {
+      if (!chat || (!chat.id && !chat.chat_id && !chat.uid)) return chat;
+      return {
+        ...chat,
+        agentEnabled: newStatus
+      };
+    }));
+    
+    if (selectedChat && (selectedChat.id || selectedChat.chat_id || selectedChat.uid)) {
+      setSelectedChat(prev => ({ ...prev, agentEnabled: newStatus }));
+    }
+  };
+
+  // Function to check for unresponded user messages and trigger AI response
+  const checkAndRespondToMissedMessages = async (chatToCheck = null) => {
+    try {
+      const targetChat = chatToCheck || selectedChat;
+      if (!targetChat || !targetChat.messages || targetChat.messages.length === 0) {
+        console.log('🔍 checkAndRespondToMissedMessages: No chat or messages to check');
+        return;
+      }
+
+      console.log('🔍 checkAndRespondToMissedMessages: Checking for unresponded user messages...');
+      
+      // Get the messages in chronological order (oldest first)
+      const messages = [...targetChat.messages].sort((a, b) => {
+        const timeA = new Date(a.created_at || a.updated_at || a.timestamp || 0);
+        const timeB = new Date(b.created_at || b.updated_at || b.timestamp || 0);
+        return timeA - timeB;
+      });
+
+      // Find the last user message that doesn't have a subsequent system/bot response
+      let lastUnrespondedUserMessage = null;
+      let lastUserMessageIndex = -1;
+
+      for (let i = messages.length - 1; i >= 0; i--) {
+        const message = messages[i];
+        const isUserMessage = message.sender === 'received'; // User messages are on left side
+        const isSystemMessage = message.sender === 'user'; // System/bot messages are on right side
+
+        if (isUserMessage) {
+          // Found a user message, check if there's a system response after it
+          let hasResponseAfter = false;
+          for (let j = i + 1; j < messages.length; j++) {
+            if (messages[j].sender === 'user') { // System/bot response found
+              hasResponseAfter = true;
+              break;
+            }
+          }
+
+          if (!hasResponseAfter) {
+            lastUnrespondedUserMessage = message;
+            lastUserMessageIndex = i;
+            console.log('🔍 checkAndRespondToMissedMessages: Found unresponded user message:', {
+              text: message.text?.substring(0, 50),
+              timestamp: message.created_at || message.updated_at,
+              index: i
+            });
+            break;
+          }
+        }
+      }
+
+      if (lastUnrespondedUserMessage) {
+        console.log('🤖 checkAndRespondToMissedMessages: Triggering AI response for missed message');
+        
+        // Get chat identifier
+        const chatId = targetChat.uid || targetChat.id || targetChat.chat_id;
+        
+        // Send a trigger message to the backend to make the AI respond to the last user message
+        // We'll send a meaningful message that the AI can respond to
+        const triggerMessage = `Please respond to the previous user message: "${lastUnrespondedUserMessage.text?.substring(0, 100)}..."`;
+        
+        console.log('🤖 checkAndRespondToMissedMessages: Sending trigger message:', triggerMessage);
+        
+        // Use handleSendMessage with trigger type to bypass AI agent check
+        await handleSendMessage(triggerMessage, [], 'trigger');
+
+        console.log('🤖 checkAndRespondToMissedMessages: AI response triggered successfully');
+        
+        // Refresh the chat to get the AI response
+        setTimeout(async () => {
+          try {
+            await handleChatSelect(targetChat);
+            setAgentNotificationMessage('AI Agent responded to missed user message');
+            setShowAgentNotification(true);
+            setTimeout(() => setShowAgentNotification(false), 3000);
+          } catch (error) {
+            console.error('❌ Error refreshing chat after AI response:', error);
+          }
+        }, 3000); // Wait 3 seconds for AI to process and respond
+
+      } else {
+        console.log('🔍 checkAndRespondToMissedMessages: No unresponded user messages found');
+      }
+
+    } catch (error) {
+      console.error('❌ checkAndRespondToMissedMessages error:', error);
+    }
+  };
 
 
 
      const handleSendMessage = async (messageText, files = [], messageType = 'text') => {
-    console.log('🚀 handleSendMessage: Called with:', { messageText, filesCount: files.length, messageType, selectedChat: !!selectedChat });
+    console.log('🚀 handleSendMessage: Called with:', { 
+      messageText: messageText?.substring(0, 50), 
+      filesCount: files.length, 
+      messageType, 
+      selectedChat: !!selectedChat,
+      globalAgentEnabled,
+      aiAgentStatus
+    });
+    
+    // When AI agent is enabled, prevent system from sending messages (only bot should respond)
+    // When AI agent is disabled, allow system to send messages directly to users
+    console.log('🔍 handleSendMessage: Checking AI agent restrictions:', {
+      globalAgentEnabled,
+      messageType,
+      aiAgentStatus,
+      shouldBlock: globalAgentEnabled && messageType !== 'trigger'
+    });
+    
+    if (globalAgentEnabled && messageType !== 'trigger') {
+      console.log('🚫 handleSendMessage: AI Agent is enabled - system cannot send messages (only bot responds)');
+      console.log('🚫 handleSendMessage: Blocking message - globalAgentEnabled:', globalAgentEnabled, 'messageType:', messageType);
+      return;
+    }
+    
+    console.log('✅ handleSendMessage: Proceeding to send message - AI agent:', globalAgentEnabled ? 'ENABLED' : 'DISABLED');
     
     if ((!messageText.trim() && files.length === 0) || !selectedChat) {
       console.log('❌ handleSendMessage: No message text/files or no selected chat');
@@ -2341,33 +2395,13 @@ const LiveChatScreen = () => {
         return;
       }
       
-      // CRITICAL: Validate that we're not using a test/dummy ID
-      if (chatIdentifier === 'test_chat_123' || chatIdentifier.includes('test_') || chatIdentifier.includes('dummy')) {
-        console.error('❌ handleSendMessage: Invalid test chat identifier detected:', chatIdentifier);
-        Alert.alert('Error', 'Invalid chat identifier detected. Please select a valid chat.');
-        return;
-      }
+
       
       console.log('🔍 handleSendMessage: Using chat identifier:', chatIdentifier);
       console.log('🔍 handleSendMessage: Chat identifier type:', typeof chatIdentifier);
       console.log('🔍 handleSendMessage: Chat identifier length:', chatIdentifier ? chatIdentifier.length : 0);
       
-      // Dev-only: verify identifier exists server-side to detect ID issues early
-      if (typeof __DEV__ !== 'undefined' && __DEV__) {
-        try {
-          console.log('🧪 handleSendMessage: Verifying chat identifier on server via debugContactInfo...');
-          const debugInfo = await chatAPI.debugContactInfo(chatIdentifier);
-          console.log('🧪 handleSendMessage: debugContactInfo result:', debugInfo);
-          if (debugInfo?.success === false) {
-            Alert.alert(
-              'Chat identifier may be invalid',
-              `${debugInfo?.message || 'Contact not found'}\nID used: ${chatIdentifier}`
-            );
-          }
-        } catch (e) {
-          console.log('🧪 handleSendMessage: debugContactInfo check failed:', e?.message);
-        }
-      }
+
       
       // Process files if any
       let fileAttachments = [];
@@ -2400,12 +2434,7 @@ const LiveChatScreen = () => {
         attachments: fileAttachments // Include file attachments
       };
 
-      // Show notification if AI agent is disabled
-      if (!globalAgentEnabled) {
-        setAgentNotificationMessage('AI Agent is disabled - message will be sent directly to user');
-        setShowAgentNotification(true);
-        setTimeout(() => setShowAgentNotification(false), 3000);
-      }
+      // Removed notifications to prevent extra white cards above message input
       
       console.log('🔍 handleSendMessage: Created temp message:', {
         id: tempMessage.id,
@@ -2440,22 +2469,29 @@ const LiveChatScreen = () => {
       console.log('✅ handleSendMessage: Temporary message added to UI');
 
       // Prefer the known-working /chat/sendmsg path first; fallback to direct if needed
+      // Pass the AI agent status to backend
+      // When globalAgentEnabled is true (AI agent enabled), bot will respond automatically
+      // When globalAgentEnabled is false (AI agent disabled), system sends direct messages
+      const aiAgentStatusForAPI = globalAgentEnabled;
+      
       console.log('📤 handleSendMessage: Primary path via sendSmartMessage (/chat/sendmsg)');
       console.log('📤 handleSendMessage: Params:', {
         chatIdentifier,
         textLen: (messageText || '').trim().length,
         fileCount: fileAttachments.length,
-        aiAgentEnabled: globalAgentEnabled
+        globalAgentEnabled: globalAgentEnabled,
+        aiAgentStatusForAPI: aiAgentStatusForAPI,
+        behavior: globalAgentEnabled ? 'Bot will respond automatically' : 'Direct messages to user'
       });
 
       let response;
       try {
-        response = await chatAPI.sendSmartMessage(chatIdentifier, (messageText || '').trim(), fileAttachments, false);
+        response = await chatAPI.sendSmartMessage(chatIdentifier, (messageText || '').trim(), fileAttachments, aiAgentStatusForAPI);
         console.log('✅ handleSendMessage: sendmsg path succeeded:', response);
       } catch (apiError) {
         console.error('⚠️ handleSendMessage: sendmsg failed, trying direct path:', apiError?.message);
         try {
-          response = await chatAPI.sendDirectMessage(chatIdentifier, (messageText || '').trim(), fileAttachments);
+          response = await chatAPI.sendDirectMessage(chatIdentifier, (messageText || '').trim(), fileAttachments, aiAgentStatusForAPI);
           console.log('✅ handleSendMessage: Direct path succeeded:', response);
         } catch (directErr) {
           console.error('❌ handleSendMessage: Both send paths failed:', directErr?.message);
@@ -2510,22 +2546,13 @@ const LiveChatScreen = () => {
     } catch (error) {
       console.error('❌ handleSendMessage: Failed to send message:', error);
       
-      // Show appropriate error message based on AI agent status
-      if (globalAgentEnabled && error.message.includes('AI agent is enabled')) {
-        Alert.alert(
-          'AI Agent Active', 
-          'AI agent is enabled and will reply automatically to users. You cannot send messages from the system.',
-          [{ text: 'OK' }]
-        );
-      } else {
-        // Show the specific error message from the API or a fallback
-        const errorMessage = error.message || 'Unable to send message. Please check your connection and try again.';
-        Alert.alert(
-          'Send Failed', 
-          errorMessage,
-          [{ text: 'OK' }]
-        );
-      }
+      // Show the specific error message from the API or a fallback
+      const errorMessage = error.message || 'Unable to send message. Please check your connection and try again.';
+      Alert.alert(
+        'Send Failed', 
+        errorMessage,
+        [{ text: 'OK' }]
+      );
       
       // Remove the failed message from the chat
       const chatWithoutFailedMessage = {
@@ -2552,7 +2579,6 @@ const LiveChatScreen = () => {
     // Reset any chat-specific states
     setSearchQuery('');
     setActiveCategory('all');
-    // Removed auto-refresh per request
   };
 
   // Function to handle returning to chat list from anywhere
@@ -2563,7 +2589,6 @@ const LiveChatScreen = () => {
     setSearchQuery('');
     setActiveCategory('all');
     setError(null);
-    // Removed auto-refresh per request
   };
 
   // Function to reclassify messages when AI agent status changes
@@ -2734,6 +2759,8 @@ const LiveChatScreen = () => {
     }
   }, [selectedChat]);
   
+
+
   // Function to update unread counts for all chats
   const updateUnreadCounts = useCallback(async () => {
     try {
@@ -2835,7 +2862,7 @@ const LiveChatScreen = () => {
   
   // Removed periodic unread count updates
   
-  // Removed smart auto-refresh functionality
+
 
   // Function to clear chat history
      const handleClearChat = async () => {
@@ -3111,8 +3138,8 @@ const LiveChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      
+    <View style={[styles.container]}>
+
       {!selectedChat ? (
         // Chat List View
         <View style={styles.chatListView}>
@@ -3142,6 +3169,8 @@ const LiveChatScreen = () => {
               <View style={styles.headerRight}>
 
                 {/* WhatsApp Messaging Manager Button removed (background-only) */}
+                
+
                 
                 {/* Refresh Button */}
                 <TouchableOpacity 
@@ -3174,8 +3203,6 @@ const LiveChatScreen = () => {
                   <X size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
-              
-
             </View>
             
 
@@ -3206,7 +3233,7 @@ const LiveChatScreen = () => {
                         styles.agentControlSubtitle,
                         { color: globalAgentEnabled ? '#666' : '#999' }
                       ]}>
-                        {globalAgentEnabled ? 'AI will respond to all chats' : 'Manual responses only'}
+                        {globalAgentEnabled ? 'You can send messages, AI responds automatically' : 'You can send messages, AI does not respond'}
                       </Text>
                     </View>
                   </View>
@@ -3227,6 +3254,8 @@ const LiveChatScreen = () => {
               </ExpoLinearGradient>
             </View>
           )}
+
+
           
           <View style={styles.categoryTabs}>
             <TouchableOpacity 
@@ -3243,9 +3272,6 @@ const LiveChatScreen = () => {
                 <Text style={[styles.categoryText, activeCategory === 'all' && styles.activeCategoryText]}>
                   All
                 </Text>
-                                 <View style={styles.categoryBadge}>
-                   <Text style={styles.badgeText}>{chats.reduce((total, chat) => total + (chat?.unreadCount || 0), 0)}</Text>
-                 </View>
               </ExpoLinearGradient>
             </TouchableOpacity>
             
@@ -3263,9 +3289,6 @@ const LiveChatScreen = () => {
                 <Text style={[styles.categoryText, activeCategory === 'mine' && styles.activeCategoryText]}>
                   Mine
                 </Text>
-                                 <View style={styles.categoryBadge}>
-                   <Text style={styles.badgeText}>{chats.filter(c => c?.isMine).reduce((total, chat) => total + (chat?.unreadCount || 0), 0)}</Text>
-                 </View>
               </ExpoLinearGradient>
             </TouchableOpacity>
           </View>
@@ -3350,6 +3373,8 @@ const LiveChatScreen = () => {
             onBack={handleBack}
             onClearChat={handleClearChat}
           />
+          
+
           
           {/* Loading State */}
           {selectedChat?.isLoading && (
@@ -3492,60 +3517,56 @@ const LiveChatScreen = () => {
                 </View>
               )}
               
-              {/* AI Agent Status Indicator */}
-              {globalAgentEnabled && (
-                <View style={styles.aiAgentStatusIndicator}>
-                  <Text style={styles.aiAgentStatusText}>
-                    🤖 AI Agent Enabled - Messages will be sent automatically to users
-                  </Text>
-                </View>
-              )}
-              
               {/* Chat Input Controls */}
-              {!globalAgentEnabled && (
-                <View style={styles.inputControlsContainer}>
-                  {/* Text Input */}
-                  <TextInput
-                    ref={inputRef}
-                    style={styles.textInput}
-                    placeholder="Type a message..."
-                    placeholderTextColor="#999"
-                    value={message}
-                    onChangeText={handleTextChange}
-                    onFocus={handleInputFocus}
-                    onBlur={handleInputBlur}
-                    multiline
-                    maxLength={1000}
-                    editable={!globalAgentEnabled}
-                  />
-                  
-                  {/* Attachment Button */}
-                  <TouchableOpacity
-                    style={styles.attachmentButton}
-                    onPress={() => setShowAttachmentMenu(!showAttachmentMenu)}
-                    disabled={globalAgentEnabled}
-                  >
-                    <Paperclip size={20} color={globalAgentEnabled ? "#999" : "#FF9500"} />
-                  </TouchableOpacity>
-                  
-                  {/* Send Button */}
-                  <TouchableOpacity
-                    style={[
-                      styles.sendButton,
-                      {
-                        backgroundColor: (message.trim() || selectedFiles.length > 0) && !globalAgentEnabled 
-                          ? '#FF9500' 
-                          : '#ccc'
-                      }
-                    ]}
-                    onPress={handleSend}
-                    disabled={globalAgentEnabled || (!message.trim() && selectedFiles.length === 0)}
-                    activeOpacity={0.7}
-                  >
-                    <Send size={20} color="#fff" />
-                  </TouchableOpacity>
-                </View>
-              )}
+              <View style={styles.inputControlsContainer}>
+                {/* Text Input */}
+                <TextInput
+                  ref={inputRef}
+                  style={[
+                    styles.messageInput,
+                    !globalAgentEnabled && styles.inputEnabled,
+                    globalAgentEnabled && styles.inputDisabled
+                  ]}
+                  placeholder="Type a message..."
+                  placeholderTextColor="#999"
+                  value={message}
+                  onChangeText={handleTextChange}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
+                  multiline
+                  maxLength={1000}
+                  editable={!globalAgentEnabled} // Disable when AI agent is enabled
+                />
+                
+                {/* Attachment Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.attachmentButton,
+                    globalAgentEnabled && styles.buttonDisabled
+                  ]}
+                  onPress={() => setShowAttachmentMenu(!showAttachmentMenu)}
+                  disabled={globalAgentEnabled} // Disable when AI agent is enabled
+                >
+                  <Paperclip size={20} color={globalAgentEnabled ? "#ccc" : "#FF9500"} />
+                </TouchableOpacity>
+                
+                {/* Send Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.sendButton,
+                    {
+                      backgroundColor: globalAgentEnabled ? '#ccc' : 
+                        (message.trim() || selectedFiles.length > 0) ? '#FF9500' : '#ccc'
+                    },
+                    globalAgentEnabled && styles.buttonDisabled
+                  ]}
+                  onPress={handleSend}
+                  disabled={globalAgentEnabled || (!message.trim() && selectedFiles.length === 0)} // Disable when AI agent is enabled
+                  activeOpacity={0.7}
+                >
+                  <Send size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
             </View>
             
 
@@ -3567,27 +3588,24 @@ const LiveChatScreen = () => {
         </KeyboardAvoidingView>
       )}
       
-      <AgentNotification 
-        visible={showAgentNotification}
-        message={agentNotificationMessage}
-        onClose={() => setShowAgentNotification(false)}
-      />
-
       {/* WhatsApp Messaging Manager UI removed (background-only behavior) */}
 
-    </SafeAreaView>
+      {/* REMOVE AgentNotification above input box */}
+      {/* If AgentNotification is rendered above the input, remove it here. */}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   // Chat List Styles
   chatListView: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+    paddingBottom: 90, // Account for fixed bottom tabs (74px height + 16px padding)
   },
   chatListHeader: {
     paddingHorizontal: 16,
@@ -3679,8 +3697,11 @@ const styles = StyleSheet.create({
     color: '#666',
   },
      agentSwitch: {
-     marginLeft: 12,
-   },
+       marginLeft: 12,
+     },
+
+
+
 
 
   titleContainer: {
@@ -3793,22 +3814,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
   },
-  categoryBadge: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  badgeText: {
-    fontSize: 10,
-    color: '#333',
-    fontWeight: '600',
-  },
+
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -3832,6 +3838,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     paddingVertical: 8,
+  },
+  messageInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    maxHeight: 100,
+  },
+  inputEnabled: {
+    backgroundColor: '#f0f0f0',
+    color: '#333',
+  },
+  inputDisabled: {
+    backgroundColor: '#e0e0e0',
+    color: '#999',
+    opacity: 0.6,
   },
   chatList: {
     flex: 1,
@@ -4147,6 +4172,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 120, // INCREASE this to give more space above input area
+    backgroundColor: '#f8f9fa',
   },
   loadingContainer: {
     flex: 1,
@@ -4204,6 +4231,7 @@ const styles = StyleSheet.create({
   messagesContent: {
     paddingHorizontal: 16,
     paddingVertical: 12,
+    paddingBottom: 40, // ADD extra padding at bottom
   },
   messageContainer: {
     marginVertical: 4,
@@ -4238,14 +4266,14 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   userMessage: {
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // White background for user messages
     alignSelf: 'flex-end',
     borderBottomRightRadius: 4,
     borderWidth: 1,
     borderColor: 'rgba(255, 149, 0, 0.2)',
   },
   agentMessage: {
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // White background for agent messages
     alignSelf: 'flex-start',
     borderBottomLeftRadius: 4,
     borderWidth: 1,
@@ -4345,23 +4373,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   inputSection: {
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    paddingBottom: Platform.OS === 'ios' ? 20 : 8, // Add more padding on iOS for better keyboard handling
+    backgroundColor: 'transparent', // Keep transparent
+    paddingBottom: Platform.OS === 'ios' ? 90 : 90,
     paddingTop: 8,
+    // Remove any fixed positioning or overlay properties
   },
   inputContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: 'transparent', // ADD THIS - was missing
   },
   inputRow: {
     flexDirection: 'row',
@@ -4372,7 +4392,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 0,
     paddingVertical: 8,
-    backgroundColor: '#f8f9fa',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -4388,7 +4407,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#fff',
     borderRadius: 6,
     marginBottom: 6,
     borderWidth: 1,
@@ -4444,7 +4462,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50,
     right: 0,
-    backgroundColor: '#fff',
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 4,
@@ -4497,41 +4514,8 @@ const styles = StyleSheet.create({
     color: '#856404',
     fontFamily: 'monospace',
   },
-  aiAgentStatusIndicator: {
-    backgroundColor: '#FFF3CD',
-    borderColor: '#FFEAA7',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 8,
-  },
-  aiAgentStatusText: {
-    fontSize: 12,
-    color: '#856404',
-    textAlign: 'center',
-    fontWeight: '500',
-  },
-  testButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-    marginTop: 8,
-    alignSelf: 'center',
-  },
-  testButtonText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  testContainer: {
-    marginTop: 16,
-    height: 300,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
+
+
   attachmentButton: {
     padding: 4,
     marginLeft: 8,
@@ -4727,24 +4711,22 @@ const styles = StyleSheet.create({
      textAlign: 'center',
    },
    
-   // File Upload Interface Styles
    inputControlsContainer: {
-     flexDirection: 'row',
-     alignItems: 'flex-end',
-     paddingHorizontal: 16,
-     paddingVertical: 12,
-     backgroundColor: '#fff',
-     borderTopWidth: 1,
-     borderTopColor: '#e0e0e0',
-     gap: 8,
-   },
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingBottom: 20,
+    gap: 8,
+    backgroundColor: 'transparent', // ADD THIS - was missing
+  },
    textInput: {
      flex: 1,
      minHeight: 40,
      maxHeight: 100,
      paddingHorizontal: 12,
      paddingVertical: 8,
-     backgroundColor: '#f8f9fa',
+     backgroundColor: '#fff', // White background for text input
      borderRadius: 20,
      fontSize: 16,
      color: '#333',
@@ -4755,7 +4737,7 @@ const styles = StyleSheet.create({
      width: 40,
      height: 40,
      borderRadius: 20,
-     backgroundColor: '#f8f9fa',
+     backgroundColor: '#fff', // White background for attachment button
      alignItems: 'center',
      justifyContent: 'center',
      borderWidth: 1,
@@ -4768,11 +4750,18 @@ const styles = StyleSheet.create({
      alignItems: 'center',
      justifyContent: 'center',
    },
+   // Disabled state styles
+   textInputDisabled: {
+     color: '#999',
+     borderColor: '#ccc',
+   },
+   buttonDisabled: {
+     opacity: 0.5,
+   },
    attachmentMenu: {
      position: 'absolute',
      bottom: 70,
      right: 16,
-     backgroundColor: '#fff',
      borderRadius: 12,
      paddingVertical: 8,
      paddingHorizontal: 4,
@@ -4799,9 +4788,6 @@ const styles = StyleSheet.create({
    selectedFilesContainer: {
      paddingHorizontal: 16,
      paddingVertical: 8,
-     backgroundColor: '#f8f9fa',
-     borderTopWidth: 1,
-     borderTopColor: '#e0e0e0',
    },
    selectedFilesTitle: {
      fontSize: 14,
@@ -4814,7 +4800,6 @@ const styles = StyleSheet.create({
      alignItems: 'center',
      paddingVertical: 8,
      paddingHorizontal: 12,
-     backgroundColor: '#fff',
      borderRadius: 8,
      marginBottom: 6,
      borderWidth: 1,
@@ -4856,19 +4841,7 @@ const styles = StyleSheet.create({
      fontWeight: 'bold',
      color: '#fff',
    },
-   aiAgentStatusIndicator: {
-     paddingHorizontal: 16,
-     paddingVertical: 8,
-     backgroundColor: '#fff3cd',
-     borderTopWidth: 1,
-     borderTopColor: '#ffeaa7',
-   },
-   aiAgentStatusText: {
-     fontSize: 14,
-     color: '#856404',
-     textAlign: 'center',
-     fontWeight: '500',
-   },
+
    menuOverlay: {
      position: 'absolute',
      top: 0,

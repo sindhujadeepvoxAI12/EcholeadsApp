@@ -1,7 +1,7 @@
 // app/(tabs)/PhoneSettings.js - Phone Numbers Management Page
 // Modern UI with beautiful animations and card-based design
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,13 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
-  Animated,
+  // Animated,
   Alert,
   Modal,
   Platform,
   RefreshControl
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Phone,
   Search,
@@ -36,7 +36,7 @@ import {
   Settings
 } from 'lucide-react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAgents } from '../../contexts/AgentContext';
 
@@ -364,7 +364,7 @@ const PhoneSettingsScreen = () => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       
       {/* Header */}
       <View style={styles.header}>
@@ -531,7 +531,7 @@ const PhoneSettingsScreen = () => {
         }}
         onAssign={handleAgentAssignment}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    // paddingTop: 30,
+    paddingTop: 15, // Moderate padding top
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',

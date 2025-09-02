@@ -14,7 +14,7 @@ import {
   Animated,
   Platform
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Upload,
   FileText,
@@ -53,12 +53,12 @@ const CampaignCreationFlow = () => {
   const [isUploading, setIsUploading] = useState(false);
   
   // Animation values
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(50)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
-  const modalScaleAnim = useRef(new Animated.Value(0)).current;
-  const successScaleAnim = useRef(new Animated.Value(0)).current;
+  // const fadeAnim = useRef(new Animated.Value(0)).current;
+  // const slideAnim = useRef(new Animated.Value(50)).current;
+  // const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  // const progressAnim = useRef(new Animated.Value(0)).current;
+  // const modalScaleAnim = useRef(new Animated.Value(0)).current;
+  // const successScaleAnim = useRef(new Animated.Value(0)).current;
   
   const [formData, setFormData] = useState({
     agentName: "",
@@ -116,18 +116,18 @@ const CampaignCreationFlow = () => {
 
   useEffect(() => {
     // Animate progress bar only
-    Animated.timing(progressAnim, {
-      toValue: (currentStep + 1) / steps.length,
-      duration: 800,
-      useNativeDriver: false,
-    }).start();
+    // Animated.timing(progressAnim, {
+    //   toValue: (currentStep + 1) / steps.length,
+    //   duration: 800,
+    //   useNativeDriver: false,
+    // }).start();
   }, [currentStep]);
 
   // Initialize animations once
   useEffect(() => {
-    fadeAnim.setValue(1);
-    slideAnim.setValue(0);
-    scaleAnim.setValue(1);
+    // fadeAnim.setValue(1);
+    // slideAnim.setValue(0);
+    // scaleAnim.setValue(1);
   }, []);
 
   const validateStep = useCallback((stepIndex) => {
@@ -197,18 +197,18 @@ const CampaignCreationFlow = () => {
     setErrors(prev => ({ ...prev, selectedAgent: undefined }));
     
     // Success animation
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 1.05,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Animated.sequence([
+    //   Animated.timing(scaleAnim, {
+    //     toValue: 1.05,
+    //     duration: 150,
+    //     useNativeDriver: true,
+    //   }),
+    //   Animated.timing(scaleAnim, {
+    //     toValue: 1,
+    //     duration: 150,
+    //     useNativeDriver: true,
+    //   }),
+    // ]).start();
   };
 
   const selectTimezone = (timezone) => {
@@ -238,16 +238,16 @@ const CampaignCreationFlow = () => {
           
           // Show success modal
           setShowSuccessModal(true);
-          Animated.spring(successScaleAnim, {
-            toValue: 1,
-            tension: 50,
-            friction: 3,
-            useNativeDriver: true,
-          }).start();
+          // Animated.spring(successScaleAnim, {
+          //   toValue: 1,
+          //   tension: 50,
+          //   friction: 3,
+          //   useNativeDriver: true,
+          // }).start();
           
           setTimeout(() => {
             setShowSuccessModal(false);
-            successScaleAnim.setValue(0);
+            // successScaleAnim.setValue(0);
           }, 2000);
           
           return 100;
@@ -265,22 +265,23 @@ const CampaignCreationFlow = () => {
 
   const handleFileUpload = useCallback(() => {
     setShowFileUploadModal(true);
-    Animated.spring(modalScaleAnim, {
-      toValue: 1,
-      tension: 50,
-      friction: 3,
-      useNativeDriver: true,
-    }).start();
+    // Animated.spring(modalScaleAnim, {
+    //   toValue: 1,
+    //   tension: 50,
+    //   friction: 3,
+    //   useNativeDriver: true,
+    // }).start();
   }, []);
 
   const closeFileUploadModal = useCallback(() => {
-    Animated.timing(modalScaleAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setShowFileUploadModal(false);
-    });
+    // Animated.timing(modalScaleAnim, {
+    //   toValue: 0,
+    //   duration: 300,
+    //   useNativeDriver: true,
+    // }).start(() => {
+    //   setShowFileUploadModal(false);
+    // });
+    setShowFileUploadModal(false);
   }, []);
 
   const toggleScheduleDay = (day) => {
@@ -339,19 +340,16 @@ const CampaignCreationFlow = () => {
   const StepIndicator = () => (
     <View style={styles.stepIndicatorContainer}>
       {/* Progress Bar */}
-      <View style={styles.progressBarContainer}>
-        <View style={styles.progressBarBackground}>
-          <Animated.View style={[
-            styles.progressBarFill,
-            {
-              width: progressAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: ['0%', '100%'],
-              }),
-            },
-          ]} />
+              <View style={styles.progressBarContainer}>
+          <View style={styles.progressBarBackground}>
+            <View style={[
+              styles.progressBarFill,
+              {
+                width: `${((currentStep + 1) / steps.length) * 100}%`,
+              },
+            ]} />
+          </View>
         </View>
-      </View>
       
       <View style={styles.stepIndicator}>
         {steps.map((step, index) => {
@@ -605,7 +603,7 @@ const CampaignCreationFlow = () => {
                         dayData.enabled && styles.toggleSwitchActive
                       ]}
                     >
-                      <Animated.View style={[
+                      <View style={[
                         styles.toggleThumb,
                         dayData.enabled && styles.toggleThumbActive
                       ]} />
@@ -738,7 +736,7 @@ const CampaignCreationFlow = () => {
   }, [currentStep, AgentContactStep, CampaignDetailsStep, ScheduleStep, ReviewStep]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       
       {/* Header */}
       <View style={styles.header}>
@@ -798,7 +796,7 @@ const CampaignCreationFlow = () => {
         onRequestClose={() => setShowAgentDropdown(false)}
       >
         <View style={styles.modalOverlay}>
-          <Animated.View style={[
+          <View style={[
             styles.modalContent,
             {
               transform: [{ scale: showAgentDropdown ? 1 : 0 }]
@@ -848,7 +846,7 @@ const CampaignCreationFlow = () => {
                 </TouchableOpacity>
               )}
             />
-          </Animated.View>
+          </View>
         </View>
       </Modal>
 
@@ -860,7 +858,7 @@ const CampaignCreationFlow = () => {
         onRequestClose={() => setShowTimezoneDropdown(false)}
       >
         <View style={styles.modalOverlay}>
-          <Animated.View style={[
+          <View style={[
             styles.modalContent,
             {
               transform: [{ scale: showTimezoneDropdown ? 1 : 0 }]
@@ -885,7 +883,7 @@ const CampaignCreationFlow = () => {
                 </TouchableOpacity>
               )}
             />
-          </Animated.View>
+          </View>
         </View>
       </Modal>
 
@@ -897,10 +895,10 @@ const CampaignCreationFlow = () => {
         onRequestClose={closeFileUploadModal}
       >
         <View style={styles.modalOverlay}>
-          <Animated.View style={[
+          <View style={[
             styles.fileUploadModal,
             {
-              transform: [{ scale: modalScaleAnim }]
+              transform: [{ scale: showFileUploadModal ? 1 : 0 }]
             }
           ]}>
             <View style={styles.fileUploadHeader}>
@@ -917,7 +915,7 @@ const CampaignCreationFlow = () => {
             {isUploading ? (
               <View style={styles.uploadProgressContainer}>
                 <View style={styles.uploadProgressBar}>
-                  <Animated.View style={[
+                  <View style={[
                     styles.uploadProgressFill,
                     { width: `${uploadProgress}%` }
                   ]} />
@@ -955,7 +953,7 @@ const CampaignCreationFlow = () => {
                 </TouchableOpacity>
               </View>
             )}
-          </Animated.View>
+          </View>
         </View>
       </Modal>
 
@@ -966,10 +964,10 @@ const CampaignCreationFlow = () => {
         animationType="fade"
       >
         <View style={styles.successModalOverlay}>
-          <Animated.View style={[
+          <View style={[
             styles.successModal,
             {
-              transform: [{ scale: successScaleAnim }]
+              transform: [{ scale: showSuccessModal ? 1 : 0 }]
             }
           ]}>
             <View style={styles.successIcon}>
@@ -979,10 +977,10 @@ const CampaignCreationFlow = () => {
             <Text style={styles.successDescription}>
               Your file has been uploaded successfully
             </Text>
-          </Animated.View>
+          </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -990,7 +988,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
-    paddingTop: Platform.OS === 'android' ? 25 : 0,
+    // paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
   header: {
     flexDirection: 'row',
