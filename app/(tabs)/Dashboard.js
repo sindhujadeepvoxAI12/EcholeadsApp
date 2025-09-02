@@ -14,17 +14,17 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LineChart } from 'react-native-chart-kit';
-import { 
-  Ionicons 
+import {
+  Ionicons
 } from '@expo/vector-icons';
-import { 
-  Users, 
-  Phone, 
-  Clock, 
-  TrendingUp, 
-  Zap, 
-  Plus, 
-  ChevronLeft, 
+import {
+  Users,
+  Phone,
+  Clock,
+  TrendingUp,
+  Zap,
+  Plus,
+  ChevronLeft,
   ChevronRight,
   Wallet,
   BarChart3,
@@ -50,6 +50,7 @@ import { useCampaigns } from '../../contexts/CampaignContext';
 // Import separate components
 import NotificationsModal from '../../components/NotificationsModal';
 import ProfileSettingsModal from '../../components/ProfileSettingsModal';
+import { registerForPushNotificationsAsync } from '../utils/notifications';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -58,19 +59,19 @@ const generateMockData = (days = 7) => {
   const data = [];
   const labels = [];
   const today = new Date();
-  
+
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
     labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-    
+
     if (i === 0) {
       data.push(Math.floor(Math.random() * 50) + 70);
     } else {
       data.push(Math.floor(Math.random() * 10) + 2);
     }
   }
-  
+
   return { data, labels };
 };
 
@@ -114,7 +115,7 @@ const CompactHeader = ({ userName = "John Smith", onNotifications, onProfile, on
   // }, []);
 
   return (
-    <View 
+    <View
       style={[
         styles.compactHeader,
         // {
@@ -136,22 +137,22 @@ const CompactHeader = ({ userName = "John Smith", onNotifications, onProfile, on
         </View>
 
         <View style={styles.headerActions}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.actionButton}
             onPress={onNotifications}
             activeOpacity={0.7}
           >
             {/* <Animated.View style={{ transform: [{ scale: bellPulse }] }}> */}
-              <Bell size={18} color="#FF9500" />
+            <Bell size={18} color="#FF9500" />
             {/* </Animated.View> */}
-                         {notificationCount > 0 && (
-               <View style={styles.badge}>
-                 <Text style={styles.badgeText}>{notificationCount}</Text>
-               </View>
-             )}
+            {notificationCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{notificationCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.actionButton}
             onPress={onProfile}
             activeOpacity={0.7}
@@ -159,7 +160,7 @@ const CompactHeader = ({ userName = "John Smith", onNotifications, onProfile, on
             <Settings size={18} color="#FF9500" />
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.actionButton}
             onPress={onLogout}
             activeOpacity={0.7}
@@ -244,7 +245,7 @@ const EnhancedStatCard = ({ icon: Icon, title, value, subtitle, color, trend, de
       ]}
     >
       <View style={styles.cardHeader}>
-        <Animated.View 
+        <Animated.View
           style={[
             styles.iconContainer,
             { backgroundColor: `${color}15` },
@@ -253,7 +254,7 @@ const EnhancedStatCard = ({ icon: Icon, title, value, subtitle, color, trend, de
         >
           <Icon size={22} color={color} />
         </Animated.View>
-        
+
         <View style={styles.trendBadge}>
           <ArrowUpRight size={12} color="#34C759" />
           <Text style={styles.trendText}>+12%</Text>
@@ -267,7 +268,7 @@ const EnhancedStatCard = ({ icon: Icon, title, value, subtitle, color, trend, de
       </View>
 
       <View style={styles.progressWrapper}>
-        <Animated.View 
+        <Animated.View
           style={[
             styles.progressFill,
             { backgroundColor: color },
@@ -285,9 +286,11 @@ const EnhancedStatCard = ({ icon: Icon, title, value, subtitle, color, trend, de
 };
 
 // Performance Overview Section
-const PerformanceOverview = ({ stats }) => {
+const PerformanceOverview = ({ stats, dashbordToken }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
+
+
 
   useEffect(() => {
     Animated.parallel([
@@ -320,8 +323,9 @@ const PerformanceOverview = ({ stats }) => {
         </View>
         <Text style={styles.sectionTitle}>Performance Overview</Text>
         <Text style={styles.sectionSubtitle}>Real-time insights</Text>
+        <Text style={styles.sectionSubtitle}>notification token-{dashbordToken}</Text>
       </View>
-      
+
       <View style={styles.statsContainer}>
         <View style={styles.gridRow}>
           <EnhancedStatCard
@@ -433,14 +437,14 @@ const CampaignProgressSection = ({ agents, campaigns }) => {
               </View>
               <View style={styles.campaignProgress}>
                 <View style={styles.progressBar}>
-                  <View 
+                  <View
                     style={[
-                      styles.progressFill, 
-                      { 
+                      styles.progressFill,
+                      {
                         width: `${Math.min((campaign.progress || 0), 100)}%`,
                         backgroundColor: '#FF9500'
                       }
-                    ]} 
+                    ]}
                   />
                 </View>
                 <Text style={styles.progressText}>{campaign.progress || 0}%</Text>
@@ -462,7 +466,7 @@ const CleanChartSection = ({ currentWeek, onWeekChange, totalWeeks, chartData, c
     startDate.setDate(today.getDate() - (29 - currentWeek * 7)); // Show 7 days per period
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 6);
-    
+
     return {
       start: startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       end: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -528,7 +532,7 @@ const CleanChartSection = ({ currentWeek, onWeekChange, totalWeeks, chartData, c
             <Text style={styles.chartSubtitle}>Track your performance</Text>
           </View>
         </View>
-        
+
         <View style={styles.performanceBadge}>
           <Text style={styles.performanceText}>↗ {callAnalytics.successRate}% Success</Text>
         </View>
@@ -543,12 +547,12 @@ const CleanChartSection = ({ currentWeek, onWeekChange, totalWeeks, chartData, c
         >
           <ChevronLeft size={18} color={currentWeek === 0 ? "#999" : "#FF9500"} />
         </TouchableOpacity>
-        
-                 <View style={styles.weekDisplay}>
-           <Text style={styles.weekNumber}>Week {currentWeek + 1} of {totalWeeks}</Text>
-           <Text style={styles.weekDescription}>{dateRange.start} - {dateRange.end}</Text>
-         </View>
-        
+
+        <View style={styles.weekDisplay}>
+          <Text style={styles.weekNumber}>Week {currentWeek + 1} of {totalWeeks}</Text>
+          <Text style={styles.weekDescription}>{dateRange.start} - {dateRange.end}</Text>
+        </View>
+
         <TouchableOpacity
           style={[styles.weekNavBtn, currentWeek === totalWeeks - 1 && styles.weekNavBtnDisabled]}
           onPress={() => currentWeek < totalWeeks - 1 && onWeekChange(currentWeek + 1)}
@@ -559,25 +563,25 @@ const CleanChartSection = ({ currentWeek, onWeekChange, totalWeeks, chartData, c
         </TouchableOpacity>
       </View>
 
-             <View style={styles.chartWrapper}>
-         <LineChart
-           data={{
-             labels: chartData.labels.slice(currentWeek * 7, (currentWeek + 1) * 7),
-             datasets: [
-               {
-                 data: chartData.data.slice(currentWeek * 7, (currentWeek + 1) * 7),
-                 color: (opacity = 1) => `rgba(255, 149, 0, ${opacity})`,
-                 strokeWidth: 3
-               }
-             ]
-           }}
-           width={screenWidth - 60}
-           height={220}
-           chartConfig={chartConfig}
-           bezier
-           style={styles.chart}
-         />
-       </View>
+      <View style={styles.chartWrapper}>
+        <LineChart
+          data={{
+            labels: chartData.labels.slice(currentWeek * 7, (currentWeek + 1) * 7),
+            datasets: [
+              {
+                data: chartData.data.slice(currentWeek * 7, (currentWeek + 1) * 7),
+                color: (opacity = 1) => `rgba(255, 149, 0, ${opacity})`,
+                strokeWidth: 3
+              }
+            ]
+          }}
+          width={screenWidth - 60}
+          height={220}
+          chartConfig={chartConfig}
+          bezier
+          style={styles.chart}
+        />
+      </View>
     </Animated.View>
   );
 };
@@ -639,7 +643,7 @@ const CleanCreditsSection = ({ credits, onAddCredits, onPurchase }) => {
       </View>
 
       <View style={styles.creditsBody}>
-        <Animated.Text 
+        <Animated.Text
           style={[
             styles.creditsAmount,
             { transform: [{ scale: pulseAnim }] }
@@ -651,7 +655,7 @@ const CleanCreditsSection = ({ credits, onAddCredits, onPurchase }) => {
       </View>
 
       <View style={styles.creditsFooter}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.addBtn}
           onPress={onAddCredits}
           activeOpacity={0.8}
@@ -659,8 +663,8 @@ const CleanCreditsSection = ({ credits, onAddCredits, onPurchase }) => {
           <Plus size={16} color="#FF9500" />
           <Text style={styles.addBtnText}>Add Credits</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.purchaseBtn}
           onPress={onPurchase}
           activeOpacity={0.8}
@@ -687,9 +691,32 @@ const DashboardScreen = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [dashbordToken, setDashbordToken] = useState("");
   const [userName, setUserName] = useState("User");
   const [notificationCount, setNotificationCount] = useState(0);
   const totalWeeks = 4; // This will now represent 30-day periods
+
+
+  useEffect(() => {
+    DashboardToken()
+  }, [])
+
+  console.log(dashbordToken, "tokenNotification>>")
+
+
+
+
+  async function DashboardToken() {
+    const deviceToken = await registerForPushNotificationsAsync();
+    console.log(deviceToken, "dashoboardtoken")
+    setDashbordToken(deviceToken)
+    return deviceToken;
+
+  }
+
+
+
+
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -705,14 +732,14 @@ const DashboardScreen = () => {
     const activeAgents = agents.filter(agent => agent.status === 'active').length;
     const totalCampaigns = campaigns.length;
     const totalCalls = agents.reduce((sum, agent) => sum + (agent.stats?.totalCalls || 0), 0);
-    
+
     // Calculate average duration from all agents
     const totalDuration = agents.reduce((sum, agent) => {
       const duration = agent.performance?.avgCallDuration || "0:00";
       const [minutes, seconds] = duration.split(':').map(Number);
       return sum + (minutes * 60 + seconds);
     }, 0);
-    
+
     const avgDurationSeconds = totalAgents > 0 ? Math.floor(totalDuration / totalAgents) : 0;
     const avgDurationMinutes = Math.floor(avgDurationSeconds / 60);
     const avgDurationRemainingSeconds = avgDurationSeconds % 60;
@@ -732,21 +759,21 @@ const DashboardScreen = () => {
   // Calculate overall call analytics metrics
   const calculateCallAnalytics = () => {
     const activeAgents = agents.filter(agent => agent.status === 'active');
-    
+
     // Calculate success rate across all agents
-    const totalSuccessRate = activeAgents.length > 0 ? 
+    const totalSuccessRate = activeAgents.length > 0 ?
       activeAgents.reduce((sum, agent) => sum + (agent.performance?.successRate || 0), 0) / activeAgents.length : 0;
-    
+
     // Calculate conversion rate across all agents
-    const totalConversionRate = activeAgents.length > 0 ? 
+    const totalConversionRate = activeAgents.length > 0 ?
       activeAgents.reduce((sum, agent) => sum + (agent.performance?.conversionRate || 0), 0) / activeAgents.length : 0;
-    
+
     // Calculate total available calls
     const totalAvailableCalls = agents.reduce((sum, agent) => sum + (agent.stats?.available || 0), 0);
-    
+
     // Calculate total consumed calls
     const totalConsumedCalls = agents.reduce((sum, agent) => sum + (agent.stats?.consumed || 0), 0);
-    
+
     return {
       successRate: Math.round(totalSuccessRate),
       conversionRate: Math.round(totalConversionRate),
@@ -774,38 +801,38 @@ const DashboardScreen = () => {
   // Calculate notifications based on credits and campaign progress
   const calculateNotifications = () => {
     let count = 0;
-    
+
     // Check for low credits notification
     if (credits < 1000) {
       count++;
     }
-    
+
     // Check for active campaigns (limit to 1 notification per campaign type)
-    const activeCampaigns = campaigns.filter(campaign => 
+    const activeCampaigns = campaigns.filter(campaign =>
       campaign.status === 'active' || campaign.status === 'In Progress'
     );
     if (activeCampaigns.length > 0) {
       count += Math.min(activeCampaigns.length, 3); // Max 3 campaign notifications
     }
-    
+
     // Check for agents with low performance (limit to 2 notifications)
-    const lowPerformanceAgents = agents.filter(agent => 
-      agent.status === 'active' && 
+    const lowPerformanceAgents = agents.filter(agent =>
+      agent.status === 'active' &&
       agent.performance?.successRate < 50
     );
     if (lowPerformanceAgents.length > 0) {
       count += Math.min(lowPerformanceAgents.length, 2); // Max 2 low performance notifications
     }
-    
+
     // Check for high performance agents (limit to 1 notification)
-    const highPerformanceAgents = agents.filter(agent => 
-      agent.status === 'active' && 
+    const highPerformanceAgents = agents.filter(agent =>
+      agent.status === 'active' &&
       agent.performance?.successRate > 80
     );
     if (highPerformanceAgents.length > 0) {
       count += 1; // Only 1 high performance notification
     }
-    
+
     return count;
   };
 
@@ -835,26 +862,26 @@ const DashboardScreen = () => {
       const data = [];
       const labels = [];
       const today = new Date();
-      
+
       // Calculate daily call distribution based on active agents and their performance
       const activeAgents = agents.filter(agent => agent.status === 'active');
-      const avgCallsPerAgent = activeAgents.length > 0 ? 
+      const avgCallsPerAgent = activeAgents.length > 0 ?
         activeAgents.reduce((sum, agent) => sum + (agent.stats?.totalCalls || 0), 0) / activeAgents.length : 0;
-      
+
       // Generate last 30 days of data based on agent performance
       for (let i = 29; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        
+
         // Calculate realistic daily calls based on active agents and their average performance
         const baseDailyCalls = Math.floor(avgCallsPerAgent * activeAgents.length / 30);
         const variation = Math.floor(Math.random() * 40) - 20; // ±20 variation for realism
         const dailyCalls = Math.max(0, baseDailyCalls + variation);
-        
+
         data.push(dailyCalls);
       }
-      
+
       return { data, labels };
     };
 
@@ -877,16 +904,16 @@ const DashboardScreen = () => {
       "Are you sure you want to logout?",
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Logout", 
+        {
+          text: "Logout",
           style: "destructive",
           onPress: async () => {
             try {
               console.log('Logout confirmed, using AuthContext…');
-              
+
               // Use AuthContext to handle logout
               const logoutResult = await logout();
-              
+
               if (logoutResult.success) {
                 console.log('Logout successful via AuthContext');
                 // Navigate to login after successful logout
@@ -939,28 +966,28 @@ const DashboardScreen = () => {
 
   return (
     <View style={styles.container} >
-      
-             {/* Compact Header */}
-       <CompactHeader 
-         userName={userName}
-         onNotifications={handleNotifications}
-         onProfile={handleProfile}
-         onLogout={handleLogout}
-         notificationCount={notificationCount}
-       />
 
-      <ScrollView 
-        style={styles.content} 
+      {/* Compact Header */}
+      <CompactHeader
+        userName={userName}
+        onNotifications={handleNotifications}
+        onProfile={handleProfile}
+        onLogout={handleLogout}
+        notificationCount={notificationCount}
+      />
+
+      <ScrollView
+        style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-                 {/* Performance Overview Section */}
-         <PerformanceOverview stats={stats} />
+        {/* Performance Overview Section */}
+        <PerformanceOverview stats={stats} dashbordToken={dashbordToken} />
 
-         {/* Campaign Progress Section */}
-         <CampaignProgressSection agents={agents} campaigns={campaigns} />
+        {/* Campaign Progress Section */}
+        <CampaignProgressSection agents={agents} campaigns={campaigns} />
 
-         {/* Chart Section */}
+        {/* Chart Section */}
         <CleanChartSection
           currentWeek={currentWeek}
           onWeekChange={setCurrentWeek}
@@ -969,26 +996,26 @@ const DashboardScreen = () => {
           callAnalytics={callAnalytics}
         />
 
-                 {/* Credits Section */}
-         <CleanCreditsSection
-           credits={credits}
-           onAddCredits={handleAddCredits}
-           onPurchase={() => router.push('/(tabs)/Purchase')}
-         />
+        {/* Credits Section */}
+        <CleanCreditsSection
+          credits={credits}
+          onAddCredits={handleAddCredits}
+          onPurchase={() => router.push('/(tabs)/Purchase')}
+        />
 
         <View style={styles.bottomPadding} />
       </ScrollView>
 
-      
 
-             {/* Notifications Modal - Using separate component */}
-       <NotificationsModal
-         visible={showNotifications}
-         onClose={() => setShowNotifications(false)}
-         agents={agents}
-         campaigns={campaigns}
-         credits={credits}
-       />
+
+      {/* Notifications Modal - Using separate component */}
+      <NotificationsModal
+        visible={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        agents={agents}
+        campaigns={campaigns}
+        credits={credits}
+      />
 
       {/* Profile Settings Modal - Using separate component */}
       <ProfileSettingsModal
@@ -1006,7 +1033,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  
+
   // Compact Header Styles
   compactHeader: {
     backgroundColor: '#FFFFFF',
@@ -1213,98 +1240,98 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
     borderRadius: 1.5,
   },
-     progressFill: {
-     height: 3,
-     borderRadius: 1.5,
-   },
+  progressFill: {
+    height: 3,
+    borderRadius: 1.5,
+  },
 
-   // Campaign Progress Section Styles
-   campaignProgressSection: {
-     backgroundColor: '#FFFFFF',
-     marginHorizontal: 20,
-     marginTop: 20,
-     borderRadius: 16,
-     padding: 20,
-     shadowColor: '#000',
-     shadowOffset: {
-       width: 0,
-       height: 4,
-     },
-     shadowOpacity: 0.08,
-     shadowRadius: 12,
-     elevation: 4,
-   },
-   campaignStats: {
-     flexDirection: 'row',
-     justifyContent: 'space-between',
-     marginBottom: 20,
-   },
-   campaignStat: {
-     alignItems: 'center',
-     flex: 1,
-   },
-   campaignStatValue: {
-     fontSize: 24,
-     fontWeight: 'bold',
-     color: '#FF9500',
-     marginBottom: 4,
-   },
-   campaignStatLabel: {
-     fontSize: 12,
-     color: '#666666',
-     textAlign: 'center',
-   },
-   campaignList: {
-     marginTop: 10,
-   },
-   campaignListTitle: {
-     fontSize: 16,
-     fontWeight: 'bold',
-     color: '#333333',
-     marginBottom: 12,
-   },
-   campaignItem: {
-     backgroundColor: '#F8F9FA',
-     borderRadius: 12,
-     padding: 16,
-     marginBottom: 8,
-   },
-   campaignInfo: {
-     flexDirection: 'row',
-     justifyContent: 'space-between',
-     alignItems: 'center',
-     marginBottom: 8,
-   },
-   campaignName: {
-     fontSize: 14,
-     fontWeight: '600',
-     color: '#333333',
-   },
-   campaignStatus: {
-     fontSize: 12,
-     color: '#34C759',
-     fontWeight: '600',
-   },
-   campaignProgress: {
-     flexDirection: 'row',
-     alignItems: 'center',
-     gap: 8,
-   },
-   progressBar: {
-     flex: 1,
-     height: 6,
-     backgroundColor: '#E5E5E5',
-     borderRadius: 3,
-     overflow: 'hidden',
-   },
-   progressText: {
-     fontSize: 12,
-     color: '#666666',
-     fontWeight: '600',
-     minWidth: 30,
-   },
+  // Campaign Progress Section Styles
+  campaignProgressSection: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  campaignStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  campaignStat: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  campaignStatValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FF9500',
+    marginBottom: 4,
+  },
+  campaignStatLabel: {
+    fontSize: 12,
+    color: '#666666',
+    textAlign: 'center',
+  },
+  campaignList: {
+    marginTop: 10,
+  },
+  campaignListTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 12,
+  },
+  campaignItem: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 8,
+  },
+  campaignInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  campaignName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  campaignStatus: {
+    fontSize: 12,
+    color: '#34C759',
+    fontWeight: '600',
+  },
+  campaignProgress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  progressBar: {
+    flex: 1,
+    height: 6,
+    backgroundColor: '#E5E5E5',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#666666',
+    fontWeight: '600',
+    minWidth: 30,
+  },
 
-   // Chart Section Styles
+  // Chart Section Styles
   chartSection: {
     backgroundColor: '#FFFFFF',
     marginHorizontal: 20,
