@@ -397,7 +397,7 @@ const ChatHeader = ({ chat, isAdmin, globalAgentEnabled, onToggleGlobalAgent, on
             <View style={styles.menuDropdown}>
               <TouchableOpacity 
                 style={styles.menuItem}
-                onPress={onClearChat}
+                onPress={() => { setShowMenu(false); onClearChat && onClearChat(); }}
               >
                 <Eraser size={16} color="#FF3B30" />
                 <Text style={[styles.menuItemText, { color: '#FF3B30' }]}>Clear Chat History</Text>
