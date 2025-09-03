@@ -3362,7 +3362,7 @@ const LiveChatScreen = () => {
         <KeyboardAvoidingView 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.chatView}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 20 : 20}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : -40}
           enabled={true}
         >
           <ChatHeader 
@@ -4210,12 +4210,12 @@ const styles = StyleSheet.create({
   },
   messagesList: {
     flex: 1,
-    paddingBottom: 20, // Add padding to prevent content from being hidden behind keyboard
+    paddingBottom: 0,
   },
   messagesContent: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingBottom: 40, // ADD extra padding at bottom
+    paddingBottom: 12,
   },
   messageContainer: {
     marginVertical: 4,
@@ -4358,7 +4358,7 @@ const styles = StyleSheet.create({
   },
   inputSection: {
     backgroundColor: 'transparent',
-    paddingBottom: Platform.OS === 'ios' ? 90 : 90,
+    paddingBottom: Platform.OS === 'ios' ? 90 : 80,
     paddingTop: 0,
   },
   inputContainer: {
