@@ -3568,22 +3568,6 @@ const LiveChatScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            
-
-            
-
-            
-
-            
-
-            
-
-            
-
-            
-
-            
-
         </View>
         </KeyboardAvoidingView>
       )}
@@ -3604,7 +3588,7 @@ const styles = StyleSheet.create({
   // Chat List Styles
   chatListView: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: 'transparent',
     paddingBottom: 90, // Account for fixed bottom tabs (74px height + 16px padding)
   },
   chatListHeader: {
@@ -3779,7 +3763,7 @@ const styles = StyleSheet.create({
   },
   categoryTabs: {
     flexDirection: 'row',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: 'transparent',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: 1,
@@ -3823,7 +3807,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -4171,9 +4155,9 @@ const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 120, // INCREASE this to give more space above input area
-    backgroundColor: '#f8f9fa',
+    paddingTop: 8,
+    paddingBottom: 8,
+    backgroundColor: 'transparent',
   },
   loadingContainer: {
     flex: 1,
@@ -4373,15 +4357,14 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   inputSection: {
-    backgroundColor: 'transparent', // Keep transparent
+    backgroundColor: 'transparent',
     paddingBottom: Platform.OS === 'ios' ? 90 : 90,
-    paddingTop: 8,
-    // Remove any fixed positioning or overlay properties
+    paddingTop: 0,
   },
   inputContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: 'transparent', // ADD THIS - was missing
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    backgroundColor: 'transparent',
   },
   inputRow: {
     flexDirection: 'row',
@@ -4389,12 +4372,13 @@ const styles = StyleSheet.create({
   },
   selectedFilesContainer: {
     width: '100%',
-    marginBottom: 12,
-    paddingHorizontal: 0,
+    marginBottom: 8,
+    paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    backgroundColor: 'transparent',
   },
   selectedFilesTitle: {
     fontSize: 12,
@@ -4411,6 +4395,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    backgroundColor: '#f8f9fa',
   },
   fileTypeLabel: {
     fontSize: 11,
@@ -4715,10 +4700,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingBottom: 20,
+    paddingVertical: 8,
+    paddingBottom: 12,
     gap: 8,
-    backgroundColor: 'transparent', // ADD THIS - was missing
+    backgroundColor: 'transparent',
   },
    textInput: {
      flex: 1,
